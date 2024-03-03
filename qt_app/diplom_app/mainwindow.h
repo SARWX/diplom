@@ -14,8 +14,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
 
 private:
-    QGraphicsView *graphicsView;
-    QVBoxLayout *mainLayout;
+    QGraphicsView *graphicsView1;        // Указатель на экземпляр QGraphicsView, ответственного за графики
+    QGraphicsView *graphicsView2;
+    QGraphicsView *graphicsView3;
+    QGraphicsView *graphicsView4;
+
+    QVBoxLayout *mainLayout;            // Указатель на вертикальный компоновщик QVBoxLayout (расположение частей)
 };
 
 #endif // MAINWINDOW_H
