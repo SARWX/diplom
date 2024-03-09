@@ -4,8 +4,8 @@
 #include <QLineEdit>
 #include <QLabel>
 #include "qcustomplot.h"
-#include "datadisplayer.h"
-#include "testgenerator.h"
+//#include "datadisplayer.h"
+//#include "testgenerator.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -24,22 +24,48 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(centralWidget);
 
     // Графики
-    QCustomPlot *plot1 = new QCustomPlot(centralWidget);
-    QCustomPlot *plot2 = new QCustomPlot(centralWidget);
-    QCustomPlot *plot3 = new QCustomPlot(centralWidget);
-    QCustomPlot *plot4 = new QCustomPlot(centralWidget);
+//    QCustomPlot *plot1 = new QCustomPlot(centralWidget);
+//    QCustomPlot *plot2 = new QCustomPlot(centralWidget);
+//    QCustomPlot *plot3 = new QCustomPlot(centralWidget);
+    // QCustomPlot *plot4 = new QCustomPlot(centralWidget);
 
     plot1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     plot2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     plot3->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    plot4->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+ //   plot4->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // Настроим графики
     plot1->xAxis->setRange(0, 5);
     plot1->yAxis->setRange(0, 4);
 
-    plot2->xAxis->setRange(0, 5);
-    plot2->yAxis->setRange(0, 10);
+    // Получите объект оси y
+    QCPAxisRect *axisRect = plot2->axisRect();
+    QCPAxis *yAxis = axisRect->axis(QCPAxis::atLeft);
+    // Переверните ось y
+    yAxis->setRangeReversed(true);
+    yAxis->setRange(0, 10);
+    plot2->xAxis2->setRange(0, 5);
+    plot2->xAxis->setTicks(false);
+    plot2->xAxis->setTicks(false);
+    plot2->xAxis->setTickLabels(false);
+    plot2->xAxis->setBasePen(QPen(Qt::NoPen));
+    plot2->xAxis2->setVisible(true);
+
+//QCPLineEnding
+//        enum EndingStyle { esNone          ///< No ending decoration
+//                           ,esFlatArrow    ///< A filled arrow head with a straight/flat back (a triangle)
+//                           ,esSpikeArrow   ///< A filled arrow head with an indented back
+//                           ,esLineArrow    ///< A non-filled arrow head with open back
+//                           ,esDisc         ///< A filled circle
+//                           ,esSquare       ///< A filled square
+//                           ,esDiamond      ///< A filled diamond (45 degrees rotated square)
+//                           ,esBar          ///< A bar perpendicular to the line
+//                           ,esHalfBar      ///< A bar perpendicular to the line, pointing out to only one side (to which side can be changed with \ref setInverted)
+//                           ,esSkewedBar    ///< A bar that is skewed (skew controllable via \ref setLength)
+
+
+
+
 
     plot3->xAxis->setRange(0, 10);
     plot3->yAxis->setRange(0, 4);
@@ -67,16 +93,25 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Добавьте точку на график
     double x = 1.0; // Значение по оси X
-    double y = 2.5; // Значение по оси Y
+    double y = 1.0; // Значение по оси Y
 
-//    graph1->addData(x, y);
     (plot1->graph(0))->addData(x, y);
-
-    // Установите подписи осей (если нужно)
     plot1->xAxis->setLabel("Ось X");
     plot1->yAxis->setLabel("Ось Y");
-    // Перерисуйте график
-    plot1->replot();
+
+    (plot2->graph(0))->addData(x, y);
+    plot2->xAxis2->setLabel("Ось X");
+    plot2->yAxis->setLabel("Ось Z");
+
+    (plot3->graph(0))->addData(x, y);
+    plot3->xAxis->setLabel("Ось Z");
+    plot3->yAxis->setLabel("Ось Y");
+
+
+
+
+//    // Перерисуйте график
+//    plot1->replot();
 
 
 
@@ -113,7 +148,7 @@ MainWindow::MainWindow(QWidget *parent)
     gridLayout->addWidget(plot1, 0, 0, 3, 1);  // Первая строка, первый столбец
     gridLayout->addWidget(plot2, 3, 0, 3, 1);  // Вторая строка, первый столбец
     gridLayout->addWidget(plot3, 0, 1, 3, 1);  // Первая строка, второй столбец
-    gridLayout->addWidget(plot4, 3, 1, 3, 1);  // Вторая строка, второй столбец
+//    gridLayout->addWidget(plot4, 3, 1, 3, 1);  // Вторая строка, второй столбец
 
     gridLayout->addWidget(output_line, 6, 0, 1, 2);  // Третья строка, первый и второй столбец
     gridLayout->addWidget(lineEdit, 7, 0, 1, 2);  // Третья строка, первый и второй столбец
@@ -140,17 +175,20 @@ MainWindow::MainWindow(QWidget *parent)
     // Задаем связи с backend
 
     // Создаем объект dysplayer
-    DataDisplayer dysplayer(plot1, plot2, plot3);
+//    DataDisplayer dysplayer(plot1, plot2, plot3);
 
     // Создаем тестовый генератор
-    TestGenerator generator{};
+//    TestGenerator generator;
 
     // Соединяем сигнал генератора со слотом дисплеера
     // Подключаемся к сигналу для обработки сгенерированных чисел
 //    QObject::connect(&generator, SIGNAL(numbersGenerated(double, double, double)), &dysplayer, SLOT(coordinateChanged(double, double, double)));
 
 
-    QObject::connect(&generator, &TestGenerator::numbersGenerated, &dysplayer, &DataDisplayer::coordinateChanged);
+//    QObject::connect(&generator, &TestGenerator::numbersGenerated, &dysplayer, &DataDisplayer::coordinateChanged);
+//    QObject::connect(&generator, &TestGenerator::numbersGenerated, [&](double x, double y, double z) {
+//        qDebug() << "Generated numbers: x =" << x << ", y =" << y << ", z =" << z;
+//    });
 
 
 }

@@ -5,6 +5,9 @@
 #include <QGraphicsView>
 #include <QVBoxLayout>
 #include <QGraphicsScene>
+//#include "datadisplayer.h"
+#include "testgenerator.h"
+#include "qcustomplot.h"
 
 class MainWindow : public QMainWindow
 {
@@ -12,13 +15,11 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
+    QCustomPlot *plot1 = new QCustomPlot();
+    QCustomPlot *plot2 = new QCustomPlot();
+    QCustomPlot *plot3 = new QCustomPlot();
 
 private:
-    QGraphicsView *graphicsView1;        // Указатель на экземпляр QGraphicsView, ответственного за графики
-    QGraphicsView *graphicsView2;
-    QGraphicsView *graphicsView3;
-    QGraphicsView *graphicsView4;
-
     QVBoxLayout *mainLayout;            // Указатель на вертикальный компоновщик QVBoxLayout (расположение частей)
 };
 

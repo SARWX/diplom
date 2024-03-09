@@ -20,11 +20,11 @@ public:
 public slots:
     // Установить отображение новых координат
     void coordinateChanged (double x, double y, double z) {
-        (plot1->graph(0))->addData(x, y);
+        (plot1->graph(0))->setData({x}, {y});
         plot1->replot();
-        (plot2->graph(0))->addData(x, z);
+        (plot2->graph(0))->setData({x}, {z});
         plot2->replot();
-        (plot3->graph(0))->addData(z, y);
+        (plot3->graph(0))->setData({z}, {y});
         plot3->replot();
     }
 
