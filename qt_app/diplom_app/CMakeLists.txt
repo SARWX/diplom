@@ -12,13 +12,17 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets PrintSupport REQUIRED)
 
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        lib/qcustomplot.h
+        lib/qcustomplot.cpp
+        datadisplayer.h
+        testgenerator.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -44,7 +48,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(diplom_app PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(diplom_app PRIVATE Qt${QT_VERSION_MAJOR}::Widgets PRIVATE Qt${QT_VERSION_MAJOR}::PrintSupport)
 
 set_target_properties(diplom_app PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
