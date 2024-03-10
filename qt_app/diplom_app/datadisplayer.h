@@ -2,6 +2,7 @@
 #define DATADISPLAYER_H
 
 #include "qcustomplot.h"
+#include "coordinates.h"
 
 class DataDisplayer : public QObject
 {
@@ -19,12 +20,12 @@ public:
 
 public slots:
     // Установить отображение новых координат
-    void coordinateChanged (double x, double y, double z) {
-        (plot1->graph(0))->setData({x}, {y});
+    void coordinateChanged (coordinates point, int point_number = 0) {
+        (plot1->graph(point_number))->setData({point.x}, {point.y});
         plot1->replot();
-        (plot2->graph(0))->setData({x}, {z});
+        (plot2->graph(point_number))->setData({point.x}, {point.z});
         plot2->replot();
-        (plot3->graph(0))->setData({z}, {y});
+        (plot3->graph(point_number))->setData({point.z}, {point.y});
         plot3->replot();
     }
 

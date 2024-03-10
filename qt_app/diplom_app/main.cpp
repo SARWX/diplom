@@ -13,13 +13,26 @@ int main(int argc, char *argv[])
     // Создадим объект trilaterator
     Trilaterator trilaterator{};
 
+
+
+
+
+
+
+    // ТЕСТИРОВАНИЕ
+
+
     // Создаем тестовый генератор
-//    TestGenerator generator(CoordinatesGenerator);
-    TestGenerator generator(DistancesGenerator);
+    TestGenerator generator(CoordinatesGenerator);
 
     // Зададим сигнал-слотовые связи
-//    QObject::connect(&generator, &TestGenerator::coordinatesGenerated, &dysplayer, &DataDisplayer::coordinateChanged);
+    // отображать сгенерированные КООРДИНАТЫ
+    QObject::connect(&generator, &TestGenerator::coordinatesGenerated, &dysplayer, &DataDisplayer::coordinateChanged);
+    // переводить координаты в РАССТОЯНИЯ
+    QObject::connect(&generator, &TestGenerator::coordinatesGenerated, &generator, &TestGenerator::coordinatesToDistances);
+    // переводить расстояния в КООРДИАНТЫ через ТРИЛАТЕРАТОР
     QObject::connect(&generator, &TestGenerator::distancesGenerated, &trilaterator, &Trilaterator::convertDistance);
+    // отображать ТРИЛАТЕРИРОВАННЫЕ КООРДИНАТЫ
     QObject::connect(&trilaterator, &Trilaterator::coordinateChanged, &dysplayer, &DataDisplayer::coordinateChanged);
 
 

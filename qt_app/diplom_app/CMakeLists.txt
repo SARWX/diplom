@@ -24,6 +24,8 @@ set(PROJECT_SOURCES
         datadisplayer.h
         testgenerator.h
         trilaterator.h
+        coordinates.h
+        avg_array.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
