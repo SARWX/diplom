@@ -23,6 +23,7 @@ set(PROJECT_SOURCES
         lib/qcustomplot.cpp
         datadisplayer.h
         testgenerator.h
+        trilaterator.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

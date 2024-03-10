@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
  //   plot4->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // Настроим графики
-    plot1->xAxis->setRange(0, 5);
+    plot1->xAxis->setRange(0, 10);
     plot1->yAxis->setRange(0, 4);
 
     // Получите объект оси y
@@ -43,8 +43,9 @@ MainWindow::MainWindow(QWidget *parent)
     QCPAxis *yAxis = axisRect->axis(QCPAxis::atLeft);
     // Переверните ось y
     yAxis->setRangeReversed(true);
-    yAxis->setRange(0, 10);
-    plot2->xAxis2->setRange(0, 5);
+    yAxis->setRange(0, 4);
+    plot2->xAxis->setRange(0, 10);
+    plot2->xAxis2->setRange(0, 10);
     plot2->xAxis->setTicks(false);
     plot2->xAxis->setTicks(false);
     plot2->xAxis->setTickLabels(false);

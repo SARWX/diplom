@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTimer>
 #include <QDebug>
+#include<cmath>
 
 #define PLOT_MAX_X 5.0
 #define PLOT_MAX_Y 2.0
@@ -18,6 +19,12 @@
 
 #define INHIBITOR 0.01
 
+enum GeneratorType
+{
+    CoordinatesGenerator,
+    DistancesGenerator
+};
+
 
 class TestGenerator : public QObject {
     Q_OBJECT
@@ -26,8 +33,16 @@ private:
     QTimer timer;
 
 public:
-    TestGenerator(QObject *parent = nullptr) : QObject(parent) {
-        connect(&timer, &QTimer::timeout, this, &TestGenerator::generateNumbers);
+    TestGenerator(GeneratorType type, QObject *parent = nullptr) : QObject(parent) {
+        if (type == CoordinatesGenerator)
+        {
+            connect(&timer, &QTimer::timeout, this, &TestGenerator::generateCoordinates);
+        }
+        else if (type == DistancesGenerator)
+        {
+            connect(&timer, &QTimer::timeout, this, &TestGenerator::generateDistances);
+        }
+
         timer.start(33); // Запускаем таймер, генерация каждые 33 миллисекунд примерно 30 кадров в секунду
     }
 
@@ -40,11 +55,12 @@ public:
 
 signals:
     // Сигнал для передачи сгенерированных чисел
-    void numbersGenerated(double x, double y, double z);
+    void coordinatesGenerated(double x, double y, double z);
+    void distancesGenerated(double r1, double r2, double r3);
 
 private slots:
     // Слот, который генерирует числа и отправляет сигнал
-    void generateNumbers() {
+    void generateCoordinates() {
 
         // Сгенерировать X
         double dx = INHIBITOR * (double)qrand() / RAND_MAX;
@@ -71,7 +87,14 @@ private slots:
         z = z + gen_sign_z * dz;
 //        qDebug() << "new coordinate: " << x << " ; " << y << " ; " << z;
 
-        emit numbersGenerated(x, y, z);
+        emit coordinatesGenerated(x, y, z);
+    }
+
+    void generateDistances() {
+        double r1 = sqrt(3.0);          // X
+        double r2 = sqrt(2.0);          // Y
+        double r3 = sqrt(2.0);          // Z
+        emit distancesGenerated(r1, r2, r3);
     }
 };
 
