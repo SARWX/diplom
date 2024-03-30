@@ -3,6 +3,9 @@
 #include <QSizePolicy>
 #include <QLineEdit>
 #include <QLabel>
+#include <QScrollArea>
+#include <QApplication>
+#include <QDesktopWidget>
 #include "qcustomplot.h"
 //#include "datadisplayer.h"
 //#include "testgenerator.h"
@@ -11,6 +14,11 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    // Определим разрешение ээкрана
+    QDesktopWidget *desktop = QApplication::desktop();
+    QRect screenGeometry = desktop->screenGeometry();
+    int screenWidth = screenGeometry.width();
+    int screenHeight = screenGeometry.height();
 
     // Это наш приватный член, ему не нужен родитель
     // поскольку он просто за разметку отвечает
@@ -124,14 +132,22 @@ MainWindow::MainWindow(QWidget *parent)
     button5->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     button6->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
-    // Командная строка
-    QLineEdit *lineEdit = new QLineEdit(centralWidget);
-//    lineEdit->setFixedHeight(30);       // зададим фиксированную высоту
+    // Командная строка       Перенесена в заголовочынй файл
+    lineEdit = new QLineEdit(centralWidget);
     // Текстовое поле вывода
-    QLabel *output_line = new QLabel("Устройство не подключено", centralWidget);
-//    output_line->setFixedHeight(30);       // зададим фиксированную высоту
+    output_line = new QLabel("Устройство не подключено\n", centralWidget);
     output_line->setStyleSheet("background-color: lightblue;");
+    output_line->setWordWrap(true); // Включаем перенос текста по словам
+    output_line->setTextInteractionFlags(Qt::TextSelectableByMouse); // Разрешаем выделение текста мышью
+    // Сделаем текстовое поле вывода прокручиваемым (обернем его объектом типа QScrollArea)
+    scrollArea = new QScrollArea(centralWidget);
+    scrollArea->setWidgetResizable(true); // Разрешаем масштабирование содержимого
+    scrollArea->setWidget(output_line); // Устанавливаем QLabel в качестве виджета для прокрутки
+  //  scrollArea->setMaximumHeight(centralWidget->height() * 0.1); // Установка максимальной высоты QScrollArea как 0.1 высоты родительского виджета
+    scrollArea->setMaximumHeight(screenHeight * 0.1);
 
+
+    // Управляющий
 
     // Создайте компоновщик сетки
     QGridLayout *gridLayout = new QGridLayout;
@@ -142,7 +158,7 @@ MainWindow::MainWindow(QWidget *parent)
     gridLayout->addWidget(plot3, 0, 1, 3, 1);  // Первая строка, второй столбец
 //    gridLayout->addWidget(plot4, 3, 1, 3, 1);  // Вторая строка, второй столбец
 
-    gridLayout->addWidget(output_line, 6, 0, 1, 2);  // Третья строка, первый и второй столбец
+    gridLayout->addWidget(scrollArea, 6, 0, 1, 2);  // Третья строка, первый и второй столбец
     gridLayout->addWidget(lineEdit, 7, 0, 1, 2);  // Третья строка, первый и второй столбец
 
     // Создайте главный компоновщик

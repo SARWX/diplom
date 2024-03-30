@@ -26,6 +26,7 @@ set(PROJECT_SOURCES
         trilaterator.h
         coordinates.h
         avg_array.h
+        comander.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

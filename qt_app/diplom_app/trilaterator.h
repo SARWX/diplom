@@ -52,18 +52,18 @@ signals:
 public slots:
     // Слот, который генерирует числа и отправляет сигнал
     void convertDistance(double r1, double r2, double r3, int point_nimber = 0) {
-        trilaterate(r1, r2, r3);                        // производим трилатерацию с усреднением
-        coordinates dr = cur_point - prev_point;        // получаем перемещение dr
-        coordinates dr_real = dr                        // сохраним реальное dr
-        dr = project_vector(cur_dr, dr);                // спроецировать вектор dr на cur_dr
-        normalize_vector(&dr);                          // нормируем вектор
-        dr = cur_speed * dr;                            // зададим итоговое перемещение
-        double speed_dif = to_dist(dr_real - dr);       // длина ветора С УЧЕТОМ ЗНАКА + не успевает - опережает
-        speed += SPEED_DELAY * speed_dif;
+//        trilaterate(r1, r2, r3);                        // производим трилатерацию с усреднением
+//        coordinates dr = cur_point - prev_point;        // получаем перемещение dr
+//        coordinates dr_real = dr                        // сохраним реальное dr
+//        dr = project_vector(cur_dr, dr);                // спроецировать вектор dr на cur_dr
+//        normalize_vector(&dr);                          // нормируем вектор
+//        dr = cur_speed * dr;                            // зададим итоговое перемещение
+//        double speed_dif = to_dist(dr_real - dr);       // длина ветора С УЧЕТОМ ЗНАКА + не успевает - опережает
+//        speed += SPEED_DELAY * speed_dif;
 
 
 
-        coordinates speed_vector = get_speed_vecor();
+//        coordinates speed_vector = get_speed_vecor();
         emit coordinateChanged(trilaterate(r1, r2, r3), point_nimber);
     }
 

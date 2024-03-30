@@ -3,6 +3,7 @@
 #include "datadisplayer.h"
 #include "testgenerator.h"
 #include "trilaterator.h"
+#include "comander.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +13,8 @@ int main(int argc, char *argv[])
     DataDisplayer dysplayer(w.plot1, w.plot2, w.plot3);
     // Создадим объект trilaterator
     Trilaterator trilaterator{};
+    // Создадим объект Comander
+    Commander commander(w.lineEdit, w.output_line, w.scrollArea); // Инициализируем объект Commander, передавая указатель на lineEdit
 
 
 

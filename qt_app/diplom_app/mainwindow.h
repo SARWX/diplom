@@ -18,6 +18,12 @@ public:
     QCustomPlot *plot1 = new QCustomPlot();
     QCustomPlot *plot2 = new QCustomPlot();
     QCustomPlot *plot3 = new QCustomPlot();
+    // Командная строка
+    QLineEdit *lineEdit;
+    // Текст для окна вывода
+    QLabel *output_line;
+    // Скролл для окна вывода
+    QScrollArea *scrollArea;
 
 private:
     QVBoxLayout *mainLayout;            // Указатель на вертикальный компоновщик QVBoxLayout (расположение частей)
