@@ -233,72 +233,36 @@ int RCC_Configuration(void)
 	ErrorStatus HSEStartUpStatus;
 	RCC_ClocksTypeDef RCC_ClockFreq;
 
+	// Проверим чатоту
+	RCC_GetClocksFreq(&RCC_ClockFreq);
+
 	/* RCC system reset(for debug purpose) */
 	RCC_DeInit();
+	
+	// 1 - AHB Prescaler = 1
+	RCC_HCLKConfig(RCC_SYSCLK_Div1);		// Настройка HCLK (тактирование AHB)
+	// 2 - PCLK Prescaler = 1
+	RCC_PCLK2Config(RCC_HCLK_Div1);			// Настройка APB2 clock = HCLK (SPI1)
+	// 3 - PLL MUL = 5
+	// 4 - настройка PLLSource Mux = HSI
+	RCC_PLLConfig(RCC_PLLSource_HSI_Div2, RCC_PLLMul_5);
+	// 4 - System Clock MUX = PLLCLK
 
-	// /* Enable HSE */									у меня HSI
-	// RCC_HSEConfig(RCC_HSE_ON);
+	// Запускаем PLL
+	/* Enable PLL */
+	RCC_PLLCmd(ENABLE);
+	/* Wait till PLL is ready */
+	while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET){}
+	/* Select PLL as system clock source */
+	RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+	/* Wait till PLL is used as system clock source */
+	while (RCC_GetSYSCLKSource() != 0x08){}
 
-	// /* Wait till HSE is ready */
-	// HSEStartUpStatus = RCC_WaitForHSEStartUp();
-
-	// if(HSEStartUpStatus != ERROR)
-	// {
-		// /* Enable Prefetch Buffer */
-		// FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable);		А нафига flash, я EEPROM забумбоксил
-
-		/****************************************************************/
-		/* HSE= up to 25MHz (on EVB1000 is 12MHz),
-		 * HCLK=72MHz, PCLK2=72MHz, PCLK1=36MHz 						*/
-		/****************************************************************/
-		// /* Flash 2 wait state */
-		// FLASH_SetLatency(FLASH_Latency_2);		Не надо
-		/* HCLK = SYSCLK */
-		RCC_HCLKConfig(RCC_SYSCLK_Div1);		// Настройка HCLK (тактирование AHB)
-		/* PCLK2 = HCLK */
-		RCC_PCLK2Config(RCC_HCLK_Div1);			// Настройка APB2 clock = HCLK/
-		/* PCLK1 = HCLK/2 */
-		RCC_PCLK1Config(RCC_HCLK_Div2);
-		/*  ADCCLK = PCLK2/4 */
-		RCC_ADCCLKConfig(RCC_PCLK2_Div6);
-
-//		/* Configure PLLs *********************************************************/
-//		/* PLL2 configuration: PLL2CLK = (HSE / 4) * 8 = 24 MHz */
-//		RCC_PREDIV2Config(RCC_PREDIV2_Div4);
-//		RCC_PLL2Config(RCC_PLL2Mul_8);
-//
-//		/* Enable PLL2 */
-//		RCC_PLL2Cmd(ENABLE);
-//
-//		/* Wait till PLL2 is ready */
-//		while (RCC_GetFlagStatus(RCC_FLAG_PLL2RDY) == RESET){}
-//
-//		/* PLL1 configuration: PLLCLK = (PLL2 / 3) * 9 = 72 MHz */
-//		RCC_PREDIV1Config(RCC_PREDIV1_Source_PLL2, RCC_PREDIV1_Div3);
-//
-//		RCC_PLLConfig(RCC_PLLSource_PREDIV1, RCC_PLLMul_9);
-
-		/* Enable PLL */
-		RCC_PLLCmd(ENABLE);
-
-		/* Wait till PLL is ready */
-		while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET){}
-
-		/* Select PLL as system clock source */
-		RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
-
-		/* Wait till PLL is used as system clock source */
-		while (RCC_GetSYSCLKSource() != 0x08){}
-	// }
-
+	// Проверим чатоту
 	RCC_GetClocksFreq(&RCC_ClockFreq);
 
 	/* Enable SPI1 clock */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
-
-	/* Enable SPI2 clock */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
-
 	/* Enable GPIOs clocks */
 	RCC_APB2PeriphClockCmd(
 						RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
@@ -308,6 +272,82 @@ int RCC_Configuration(void)
 
 	return 0;
 }
+
+
+
+
+// 	// /* Enable HSE */									у меня HSI
+// 	// RCC_HSEConfig(RCC_HSE_ON);
+
+// 	// /* Wait till HSE is ready */
+// 	// HSEStartUpStatus = RCC_WaitForHSEStartUp();
+
+// 	// if(HSEStartUpStatus != ERROR)
+// 	// {
+// 		// /* Enable Prefetch Buffer */
+// 		// FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable);		А нафига flash, я EEPROM забумбоксил
+
+// 		/****************************************************************/
+// 		/* HSE= up to 25MHz (on EVB1000 is 12MHz),
+// 		 * HCLK=72MHz, PCLK2=72MHz, PCLK1=36MHz 						*/
+// 		/****************************************************************/
+// 		// /* Flash 2 wait state */
+// 		// FLASH_SetLatency(FLASH_Latency_2);		Не надо
+// 		/* HCLK = SYSCLK */
+// 		RCC_HCLKConfig(RCC_SYSCLK_Div1);		// Настройка HCLK (тактирование AHB)
+// 		/* PCLK2 = HCLK */
+// 		RCC_PCLK2Config(RCC_HCLK_Div1);			// Настройка APB2 clock = HCLK (SPI1)
+// 		/* PCLK1 = HCLK/2 */
+// 		RCC_PCLK1Config(RCC_HCLK_Div2);
+// 		/*  ADCCLK = PCLK2/4 */
+// 		RCC_ADCCLKConfig(RCC_PCLK2_Div6);
+
+// //		/* Configure PLLs *********************************************************/
+// //		/* PLL2 configuration: PLL2CLK = (HSE / 4) * 8 = 24 MHz */
+// //		RCC_PREDIV2Config(RCC_PREDIV2_Div4);
+// //		RCC_PLL2Config(RCC_PLL2Mul_8);
+// //
+// //		/* Enable PLL2 */
+// //		RCC_PLL2Cmd(ENABLE);
+// //
+// //		/* Wait till PLL2 is ready */
+// //		while (RCC_GetFlagStatus(RCC_FLAG_PLL2RDY) == RESET){}
+// //
+// 		/* PLL1 configuration: PLLCLK = (PLL2 / 3) * 9 = 72 MHz */
+// 		RCC_PREDIV1Config(RCC_PREDIV1_Source_PLL2, RCC_PREDIV1_Div3);
+
+// 		RCC_PLLConfig(RCC_PLLSource_PREDIV1, RCC_PLLMul_9);
+
+// 		/* Enable PLL */
+// 		RCC_PLLCmd(ENABLE);
+
+// 		/* Wait till PLL is ready */
+// 		while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET){}
+
+// 		/* Select PLL as system clock source */
+// 		RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+
+// 		/* Wait till PLL is used as system clock source */
+// 		while (RCC_GetSYSCLKSource() != 0x08){}
+// 	// }
+
+// 	RCC_GetClocksFreq(&RCC_ClockFreq);
+
+// 	/* Enable SPI1 clock */
+// 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
+
+// 	/* Enable SPI2 clock */
+// 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+
+// 	/* Enable GPIOs clocks */
+// 	RCC_APB2PeriphClockCmd(
+// 						RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
+// 						RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD |
+// 						RCC_APB2Periph_GPIOE | RCC_APB2Periph_AFIO,
+// 						ENABLE);
+
+// 	return 0;
+// }
 
 int USART_Configuration(void)
 {
@@ -1003,11 +1043,11 @@ static void spi_peripheral_init(void)
 void peripherals_init (void)
 {
 	rcc_init();					// Настройка тактирования
-	gpio_init();
-	interrupt_init();
-	systick_init();
-	spi_peripheral_init();
-	lcd_init();
+	// gpio_init();
+	// interrupt_init();
+	// systick_init();
+	// spi_peripheral_init();
+	// lcd_init();
 #ifdef USART_SUPPORT
     usartinit();
 #endif
