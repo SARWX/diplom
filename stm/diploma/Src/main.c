@@ -38,7 +38,6 @@ static uint8 tx_msg[] = {0xC5, 0, 'D', 'E', 'C', 'A', 'W', 'A', 'V', 'E', 0, 0};
 
 #ifdef USE_FULL_ASSERT
 	void assert_failed(uint8_t* file, uint32_t line)
-
 	{
 	  while (1)
 		  ;
@@ -61,7 +60,7 @@ int main(void)
     reset_DW1000(); /* Target specific drive of RSTn line into DW1000 low for a period. */
     spi_set_rate_low();
     if (dwt_initialise(DWT_LOADNONE) == DWT_ERROR)
-    {
+     {
         lcd_display_str("INIT FAILED");
         while (1)
         { };
