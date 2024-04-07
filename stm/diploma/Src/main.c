@@ -20,6 +20,8 @@ static dwt_config_t config = {
     (1025 + 64 - 32) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
 };
 
+uint32_t SystemCoreClock = 8000000;		// Без этого не компилится
+
 /* The frame sent in this example is an 802.15.4e standard blink. It is a 12-byte frame composed of the following fields:
  *     - byte 0: frame type (0xC5 for a blink).
  *     - byte 1: sequence number, incremented for each new frame.
@@ -31,6 +33,18 @@ static uint8 tx_msg[] = {0xC5, 0, 'D', 'E', 'C', 'A', 'W', 'A', 'V', 'E', 0, 0};
 
 /* Inter-frame delay period, in milliseconds. */
 #define TX_DELAY_MS 1000
+
+
+
+#ifdef USE_FULL_ASSERT
+	void assert_failed(uint8_t* file, uint32_t line)
+
+	{
+	  while (1)
+		  ;
+	}
+#endif
+
 
 /**
  * Application entry point.
@@ -83,3 +97,5 @@ int main(void)
         tx_msg[BLINK_FRAME_SN_IDX]++;
     }
 }
+
+

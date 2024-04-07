@@ -14,9 +14,6 @@ RM := rm -rf
 -include Startup/subdir.mk
 -include Src/subdir.mk
 -include Libraries/STM32F10x_StdPeriph_Driver/src/subdir.mk
--include Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/subdir.mk
--include Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/subdir.mk
--include Libraries/CMSIS/CM3/CoreSupport/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

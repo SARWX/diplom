@@ -10,6 +10,16 @@
  *
  * @author DecaWave
  */
+#include "stm32f10x_rcc.h"
+#include "stm32f10x_gpio.h"
+#include "stm32f10x_rtc.h"
+#include "stm32f10x_exti.h"
+#include "stm32f10x_spi.h"
+#include "misc.h"
+#include "stm32f10x_flash.h"
+#include "system_stm32f10x.h"
+//#include "stm32f10x.h"
+
 #include "sleep.h"
 #include "lcd.h"
 #include "port.h"
@@ -252,21 +262,21 @@ int RCC_Configuration(void)
 		/*  ADCCLK = PCLK2/4 */
 		RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 
-		/* Configure PLLs *********************************************************/
-		/* PLL2 configuration: PLL2CLK = (HSE / 4) * 8 = 24 MHz */
-		RCC_PREDIV2Config(RCC_PREDIV2_Div4);
-		RCC_PLL2Config(RCC_PLL2Mul_8);
-
-		/* Enable PLL2 */
-		RCC_PLL2Cmd(ENABLE);
-
-		/* Wait till PLL2 is ready */
-		while (RCC_GetFlagStatus(RCC_FLAG_PLL2RDY) == RESET){}
-
-		/* PLL1 configuration: PLLCLK = (PLL2 / 3) * 9 = 72 MHz */
-		RCC_PREDIV1Config(RCC_PREDIV1_Source_PLL2, RCC_PREDIV1_Div3);
-
-		RCC_PLLConfig(RCC_PLLSource_PREDIV1, RCC_PLLMul_9);
+//		/* Configure PLLs *********************************************************/
+//		/* PLL2 configuration: PLL2CLK = (HSE / 4) * 8 = 24 MHz */
+//		RCC_PREDIV2Config(RCC_PREDIV2_Div4);
+//		RCC_PLL2Config(RCC_PLL2Mul_8);
+//
+//		/* Enable PLL2 */
+//		RCC_PLL2Cmd(ENABLE);
+//
+//		/* Wait till PLL2 is ready */
+//		while (RCC_GetFlagStatus(RCC_FLAG_PLL2RDY) == RESET){}
+//
+//		/* PLL1 configuration: PLLCLK = (PLL2 / 3) * 9 = 72 MHz */
+//		RCC_PREDIV1Config(RCC_PREDIV1_Source_PLL2, RCC_PREDIV1_Div3);
+//
+//		RCC_PLLConfig(RCC_PLLSource_PREDIV1, RCC_PLLMul_9);
 
 		/* Enable PLL */
 		RCC_PLLCmd(ENABLE);

@@ -1,6 +1,3 @@
-"./Libraries/CMSIS/CM3/CoreSupport/core_cm3.o"
-"./Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/startup_stm32f10x_cl.o"
-"./Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.o"
 "./Libraries/STM32F10x_StdPeriph_Driver/src/misc.o"
 "./Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.o"
 "./Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.o"
@@ -36,4 +33,3 @@
 "./platform/lcd.o"
 "./platform/port.o"
 "./platform/stm32f10x_it.o"
-"./platform/syscalls.o"

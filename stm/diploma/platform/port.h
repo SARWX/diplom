@@ -20,6 +20,16 @@ extern "C" {
 #endif
 
 #include "stm32f10x.h"
+// test
+#include "stm32f10x_rcc.h"
+#include "stm32f10x_gpio.h"
+#include "stm32f10x_rtc.h"
+#include "stm32f10x_exti.h"
+#include "stm32f10x_spi.h"
+#include "misc.h"
+#include "stm32f10x_flash.h"
+#include "stm32f10x_usart.h"
+//
 
 /* Define our wanted value of CLOCKS_PER_SEC so that we have a millisecond
  * tick timer. */
