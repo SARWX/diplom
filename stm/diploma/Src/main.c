@@ -20,7 +20,7 @@ static dwt_config_t config = {
     (1025 + 64 - 32) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
 };
 
-uint32_t SystemCoreClock = 8000000;		// Без этого не компилится
+uint32_t SystemCoreClock = 20000000;		// Без этого не компилится
 
 /* The frame sent in this example is an 802.15.4e standard blink. It is a 12-byte frame composed of the following fields:
  *     - byte 0: frame type (0xC5 for a blink).
@@ -61,7 +61,7 @@ int main(void)
     spi_set_rate_low();
     if (dwt_initialise(DWT_LOADNONE) == DWT_ERROR)
      {
-        lcd_display_str("INIT FAILED");
+        // lcd_display_str("INIT FAILED");
         while (1)
         { };
     }
@@ -70,9 +70,14 @@ int main(void)
     /* Configure DW1000. See NOTE 3 below. */
     dwt_configure(&config);
 
+    // Пробуем GPIO
+    dwt_enablegpioclocks();
+    dwt_setgpiodirection(DWT_GxM0 | DWT_GxM1 | DWT_GxM2, DWT_GxM3);
+
     /* Loop forever sending frames periodically. */
     while(1)
     {
+        dwt_setgpiovalue(DWT_GxM0 | DWT_GxM1 | DWT_GxM2 | DWT_GxM3, DWT_GxP0 | DWT_GxP1 | DWT_GxP2 | DWT_GxP3); /* set GPIO2 high (LED4 will light up)*/
         /* Write frame data to DW1000 and prepare transmission. See NOTE 4 below.*/
         dwt_writetxdata(sizeof(tx_msg), tx_msg, 0); /* Zero offset in TX buffer. */
         dwt_writetxfctrl(sizeof(tx_msg), 0, 0); /* Zero offset in TX buffer, no ranging. */
@@ -90,11 +95,11 @@ int main(void)
         dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_TXFRS);
 
         /* Execute a delay between transmissions. */
-        sleep_ms(TX_DELAY_MS);
+        sleep_ms(TX_DELAY_MS/2);
+        dwt_setgpiovalue(DWT_GxM0 | DWT_GxM1 | DWT_GxM2 | DWT_GxM3, 0); /* set GPIO2 low (LED4 will be off)*/
+        sleep_ms(TX_DELAY_MS/2);
 
         /* Increment the blink frame sequence number (modulo 256). */
         tx_msg[BLINK_FRAME_SN_IDX]++;
     }
 }
-
-

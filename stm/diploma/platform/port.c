@@ -134,7 +134,7 @@ int NVIC_Configuration(void)
 	EXTI_InitTypeDef EXTI_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	// Enable GPIO used as DECA IRQ for interrupt
+	// Enable GPIO used as DECA IRQ for interrupt	Это короче GPIO8, я соединил его с PA2
 	GPIO_InitStructure.GPIO_Pin = DECAIRQ;
 	GPIO_InitStructure.GPIO_Mode = 	GPIO_Mode_IPD;	//IRQ pin should be Pull Down to prevent unnecessary EXT IRQ while DW1000 goes to sleep mode
 	GPIO_Init(DECAIRQ_GPIO, &GPIO_InitStructure);
@@ -183,7 +183,7 @@ ITStatus EXTI_GetITEnStatus(uint32_t EXTI_Line)
   ITStatus bitstatus = RESET;
   uint32_t enablestatus = 0;
   /* Check the parameters */
-  assert_param(IS_GET_EXTI_LINE(EXTI_Line));
+  // assert_param(IS_GET_EXTI_LINE(EXTI_Line));			ЭТА ПРОВЕРКА ФЭЙЛИЛАСЬ
 
   enablestatus =  EXTI->IMR & EXTI_Line;
   if (enablestatus != (uint32_t)RESET)
@@ -609,34 +609,34 @@ int GPIO_Configuration(void)
 	GPIO_Init(GPIOD, &GPIO_InitStructure);
 	GPIO_Init(GPIOE, &GPIO_InitStructure);
 
-	//Enable GPIO used for User button
-	GPIO_InitStructure.GPIO_Pin = TA_BOOT1;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(TA_BOOT1_GPIO, &GPIO_InitStructure);
+	// //Enable GPIO used for User button
+	// GPIO_InitStructure.GPIO_Pin = TA_BOOT1;
+	// GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	// GPIO_Init(TA_BOOT1_GPIO, &GPIO_InitStructure);
 
-	//Enable GPIO used for Response Delay setting
-	GPIO_InitStructure.GPIO_Pin = TA_RESP_DLY | TA_SW1_3 | TA_SW1_4 | TA_SW1_5 | TA_SW1_6 | TA_SW1_7 | TA_SW1_8;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(TA_RESP_DLY_GPIO, &GPIO_InitStructure);
+	// //Enable GPIO used for Response Delay setting
+	// GPIO_InitStructure.GPIO_Pin = TA_RESP_DLY | TA_SW1_3 | TA_SW1_4 | TA_SW1_5 | TA_SW1_6 | TA_SW1_7 | TA_SW1_8;
+	// GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	// GPIO_Init(TA_RESP_DLY_GPIO, &GPIO_InitStructure);
 
-	//Enable GPIO used for SW1 switch setting
-	GPIO_InitStructure.GPIO_Pin = TA_SW1_3 | TA_SW1_4 | TA_SW1_5 | TA_SW1_6 | TA_SW1_7 | TA_SW1_8;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(TA_SW1_GPIO, &GPIO_InitStructure);
+	// //Enable GPIO used for SW1 switch setting
+	// GPIO_InitStructure.GPIO_Pin = TA_SW1_3 | TA_SW1_4 | TA_SW1_5 | TA_SW1_6 | TA_SW1_7 | TA_SW1_8;
+	// GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	// GPIO_Init(TA_SW1_GPIO, &GPIO_InitStructure);
 
-	// Disable GPIOs clocks
-	//RCC_APB2PeriphClockCmd(
-	//					RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
-	//					RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD |
-	//					RCC_APB2Periph_GPIOE | RCC_APB2Periph_AFIO,
-	//					DISABLE);
+	// // Disable GPIOs clocks
+	// //RCC_APB2PeriphClockCmd(
+	// //					RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
+	// //					RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD |
+	// //					RCC_APB2Periph_GPIOE | RCC_APB2Periph_AFIO,
+	// //					DISABLE);
 
-	// Enable GPIO used for LEDs
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_6 | GPIO_Pin_7;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
-	GPIO_PinRemapConfig(GPIO_Remap_SPI1, DISABLE);
+	// // Enable GPIO used for LEDs
+	// GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_6 | GPIO_Pin_7;
+	// GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	// GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	// GPIO_Init(GPIOC, &GPIO_InitStructure);
+	// GPIO_PinRemapConfig(GPIO_Remap_SPI1, DISABLE);
 
     return 0;
 }
@@ -1022,13 +1022,13 @@ static void spi_peripheral_init(void)
 {
     spi_init();
 
-    // Initialise SPI2 peripheral for LCD control
-    SPI2_Configuration();
-    port_LCD_RS_clear();
-    port_LCD_RW_clear();
+    // // Initialise SPI2 peripheral for LCD control
+    // SPI2_Configuration();
+    // port_LCD_RS_clear();
+    // port_LCD_RW_clear();
 
-    // Wait for LCD to power on.
-    sleep_ms(10);
+    // // Wait for LCD to power on.
+    // sleep_ms(10);
 }
 
 /*! ------------------------------------------------------------------------------------------------------------------
@@ -1043,10 +1043,10 @@ static void spi_peripheral_init(void)
 void peripherals_init (void)
 {
 	rcc_init();					// Настройка тактирования
-	// gpio_init();
-	// interrupt_init();
-	// systick_init();
-	// spi_peripheral_init();
+	gpio_init();
+	interrupt_init();
+	systick_init();
+	spi_peripheral_init();
 	// lcd_init();
 #ifdef USART_SUPPORT
     usartinit();
