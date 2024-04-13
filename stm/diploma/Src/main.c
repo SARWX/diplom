@@ -75,9 +75,10 @@ int main(void)
     dwt_setgpiodirection(DWT_GxM0 | DWT_GxM1 | DWT_GxM2, DWT_GxM3);
 
     /* Loop forever sending frames periodically. */
+        dwt_setgpiovalue(DWT_GxM0 | DWT_GxM1 | DWT_GxM2 | DWT_GxM3, DWT_GxP0 | DWT_GxP1 | DWT_GxP2 | DWT_GxP3); /* set GPIO2 high (LED4 will light up)*/
     while(1)
     {
-        dwt_setgpiovalue(DWT_GxM0 | DWT_GxM1 | DWT_GxM2 | DWT_GxM3, DWT_GxP0 | DWT_GxP1 | DWT_GxP2 | DWT_GxP3); /* set GPIO2 high (LED4 will light up)*/
+        dwt_setleds(DWT_LEDS_ENABLE);
         /* Write frame data to DW1000 and prepare transmission. See NOTE 4 below.*/
         dwt_writetxdata(sizeof(tx_msg), tx_msg, 0); /* Zero offset in TX buffer. */
         dwt_writetxfctrl(sizeof(tx_msg), 0, 0); /* Zero offset in TX buffer, no ranging. */
@@ -96,7 +97,7 @@ int main(void)
 
         /* Execute a delay between transmissions. */
         sleep_ms(TX_DELAY_MS/2);
-        dwt_setgpiovalue(DWT_GxM0 | DWT_GxM1 | DWT_GxM2 | DWT_GxM3, 0); /* set GPIO2 low (LED4 will be off)*/
+        // dwt_setgpiovalue(DWT_GxM0 | DWT_GxM1 | DWT_GxM2 | DWT_GxM3, 0); /* set GPIO2 low (LED4 will be off)*/
         sleep_ms(TX_DELAY_MS/2);
 
         /* Increment the blink frame sequence number (modulo 256). */
