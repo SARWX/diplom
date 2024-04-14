@@ -2,7 +2,8 @@ Src/main.o: ../Src/main.c \
  C:/OTHER/programming/diplom/stm/diploma/decadriver/deca_device_api.h \
  C:/OTHER/programming/diplom/stm/diploma/decadriver/deca_regs.h \
  C:/OTHER/programming/diplom/stm/diploma/decadriver/deca_version.h \
- C:/OTHER/programming/diplom/stm/diploma/platform/sleep.h \
+ C:/OTHER/programming/diplom/stm/diploma/platform/lcd.h \
+ C:/OTHER/programming/diplom/stm/diploma/decadriver/deca_types.h \
  C:/OTHER/programming/diplom/stm/diploma/platform/port.h \
  C:/OTHER/programming/diplom/stm/diploma/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/stm32f10x.h \
  C:/OTHER/programming/diplom/stm/diploma/Libraries/CMSIS/CM3/CoreSupport/core_cm3.h \
@@ -34,7 +35,8 @@ Src/main.o: ../Src/main.c \
 C:/OTHER/programming/diplom/stm/diploma/decadriver/deca_device_api.h:
 C:/OTHER/programming/diplom/stm/diploma/decadriver/deca_regs.h:
 C:/OTHER/programming/diplom/stm/diploma/decadriver/deca_version.h:
-C:/OTHER/programming/diplom/stm/diploma/platform/sleep.h:
+C:/OTHER/programming/diplom/stm/diploma/platform/lcd.h:
+C:/OTHER/programming/diplom/stm/diploma/decadriver/deca_types.h:
 C:/OTHER/programming/diplom/stm/diploma/platform/port.h:
 C:/OTHER/programming/diplom/stm/diploma/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/stm32f10x.h:
 C:/OTHER/programming/diplom/stm/diploma/Libraries/CMSIS/CM3/CoreSupport/core_cm3.h:

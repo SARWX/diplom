@@ -1,2 +1,4 @@
-../Src/main.c:41:7:assert_failed	16	static
-../Src/main.c:52:5:main	8	static
+../Src/main.c:90:7:assert_failed	16	static
+../Src/main.c:108:5:main	64	static
+../Src/main.c:232:15:get_rx_timestamp_u64	48	static
+../Src/main.c:257:13:resp_msg_set_ts	40	static
