@@ -22,7 +22,7 @@
 #include "deca_device_api.h"
 #include "deca_regs.h"
 #include "sleep.h"
-#include "lcd.h"
+//#include "lcd.h"
 #include "port.h"
 
 /* Example application name and version to display on LCD screen. */
