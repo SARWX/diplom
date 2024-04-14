@@ -94,7 +94,7 @@ static void resp_msg_get_ts(uint8 *ts_field, uint32 *ts);
 
 
 // USER CODE:
-uint32_t SystemCoreClock = 20000000;		// Без этого не компилится
+uint32_t SystemCoreClock = 40000000;		// Без этого не компилится
 #ifdef USE_FULL_ASSERT
 	void assert_failed(uint8_t* file, uint32_t line)
 	{
