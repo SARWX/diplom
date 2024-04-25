@@ -77,7 +77,7 @@ static uint32 status_reg = 0;
 /* Delay between frames, in UWB microseconds. See NOTE 1 below. */
 #define POLL_TX_TO_RESP_RX_DLY_UUS 140
 /* Receive response timeout. See NOTE 5 below. */
-#define RESP_RX_TIMEOUT_UUS 210
+#define RESP_RX_TIMEOUT_UUS 2100            // Добавил 0
 
 /* Speed of light in air, in metres per second. */
 #define SPEED_OF_LIGHT 299702547
