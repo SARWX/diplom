@@ -156,6 +156,9 @@ MainWindow::MainWindow(QWidget *parent)
     gridLayout->addWidget(plot1, 0, 0, 3, 1);  // Первая строка, первый столбец
     gridLayout->addWidget(plot2, 3, 0, 3, 1);  // Вторая строка, первый столбец
     gridLayout->addWidget(plot3, 0, 1, 3, 1);  // Первая строка, второй столбец
+    gridLayout->addWidget(coordinatesLabel, 3, 1, 3, 1);
+    // Увеличим шрифт координат
+    coordinatesLabel->setStyleSheet("font-size: 60pt;");
 //    gridLayout->addWidget(plot4, 3, 1, 3, 1);  // Вторая строка, второй столбец
 
     gridLayout->addWidget(scrollArea, 6, 0, 1, 2);  // Третья строка, первый и второй столбец
@@ -200,3 +203,4 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 }
+

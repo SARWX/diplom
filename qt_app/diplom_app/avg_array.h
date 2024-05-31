@@ -3,8 +3,8 @@
 
 #include "coordinates.h"
 
-#define AVG_ARR_SIZE 20     // Размер массива для усреднения
-#define PRED_ARR_SIZE 10     // Размер массива для предсказания
+#define AVG_ARR_SIZE 200     // Размер массива для усреднения
+#define PRED_ARR_SIZE 100     // Размер массива для предсказания
 
 
 class AveragingArray
@@ -26,10 +26,15 @@ public:
 
     void AddPoint(coordinates point)
     {
-        avg_summ -= avg_array[cur_avg];
-        avg_summ += point;
-        avg_array[cur_avg] = point;
-        cur_avg = (cur_avg >= (AVG_ARR_SIZE - 1) ? 0 : cur_avg + 1);
+        if ( ((point.x < 50.0) && (point.y < 50.0) && (point.z < 50.0))
+            && ((point.x > 0.03) && (point.y > 0.03) && (point.z > 0.03)) )
+        {
+            avg_summ -= avg_array[cur_avg];
+            avg_summ += point;
+            avg_array[cur_avg] = point;
+            cur_avg = (cur_avg >= (AVG_ARR_SIZE - 1) ? 0 : cur_avg + 1);
+        }
+
     }
 
     coordinates GetAvg()

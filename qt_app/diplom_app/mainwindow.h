@@ -18,6 +18,8 @@ public:
     QCustomPlot *plot1 = new QCustomPlot();
     QCustomPlot *plot2 = new QCustomPlot();
     QCustomPlot *plot3 = new QCustomPlot();
+    // Метки для отображения значений X, Y, Z
+    QLabel *coordinatesLabel = new QLabel();
     // Командная строка
     QLineEdit *lineEdit;
     // Текст для окна вывода
@@ -25,8 +27,12 @@ public:
     // Скролл для окна вывода
     QScrollArea *scrollArea;
 
+
+
 private:
     QVBoxLayout *mainLayout;            // Указатель на вертикальный компоновщик QVBoxLayout (расположение частей)
 };
+
+
 
 #endif // MAINWINDOW_H

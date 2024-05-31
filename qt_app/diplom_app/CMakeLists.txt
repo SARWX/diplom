@@ -11,8 +11,11 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets PrintSupport REQUIRED)
+find_package(Qt5 COMPONENTS SerialPort REQUIRED)
+
 
 set(PROJECT_SOURCES
         main.cpp
@@ -27,6 +30,9 @@ set(PROJECT_SOURCES
         coordinates.h
         avg_array.h
         comander.h
+        SerialPortReader.h
+
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -53,12 +59,16 @@ else()
 endif()
 
 target_link_libraries(diplom_app PRIVATE Qt${QT_VERSION_MAJOR}::Widgets PRIVATE Qt${QT_VERSION_MAJOR}::PrintSupport)
+target_link_libraries(diplom_app PRIVATE Qt5::SerialPort)
+
 
 set_target_properties(diplom_app PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
+
+
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(diplom_app)

@@ -12,10 +12,11 @@ private:
     QCustomPlot *plot1;
     QCustomPlot *plot2;
     QCustomPlot *plot3;
+    QLabel *coordinatesLabel;
 
 public:
-    DataDisplayer(QCustomPlot *plt1, QCustomPlot *plt2, QCustomPlot *plt3)
-        : plot1(plt1), plot2(plt2), plot3(plt3) {
+    DataDisplayer(QCustomPlot *plt1, QCustomPlot *plt2, QCustomPlot *plt3, QLabel *coorLabel)
+        : plot1(plt1), plot2(plt2), plot3(plt3), coordinatesLabel(coorLabel) {
     };
 
 public slots:
@@ -27,6 +28,9 @@ public slots:
         plot2->replot();
         (plot3->graph(point_number))->setData({point.z}, {point.y});
         plot3->replot();
+
+       coordinatesLabel->setText(QString("X = %1, \nY = %2, \nZ = %3").arg(point.x).arg(point.y).arg(point.z));
+
     }
 
 };

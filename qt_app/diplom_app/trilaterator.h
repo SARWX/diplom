@@ -38,9 +38,16 @@ public:
         cur_point.x = sqrt(abs(pow(r1, 2) - pow(cur_point.y, 2) - pow(cur_point.z, 2)));
         // занесем полученные координаты в массив для усреднения
 //        coordinates delta = avg_array.GetAvg() / (-1.0);
-        avg_array.AddPoint(cur_point);
-        avg_array.AddPredictVector(cur_point);
+        // РАБОЧЯ ТЕМА, просто пока убрал
+            avg_array.AddPoint(cur_point);
+//        avg_array.AddPredictVector(cur_point);
+
+
+
 //        delta += avg_array.GetAvg();
+
+
+        // РАБОЧЯ ТЕМА, просто пока убрал
         // возвращаем усредненное значение
         cur_point = avg_array.GetAvg();
         return (cur_point);
