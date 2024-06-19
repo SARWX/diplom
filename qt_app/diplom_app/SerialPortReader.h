@@ -50,6 +50,8 @@ signals:
     // Сигнал, который отправляется при получении новых данных
 //    void newDataReceived(float x, float y, float z);
     void newDataReceived(double r1, double r2, double r3, int point_number = 0);
+    void connectionResult(int status);
+
 
 private slots:
     void updateCOMsettings(const QString &portName)
@@ -64,10 +66,14 @@ private slots:
         // Подключаемся к новому COM-порту
         serialPort.setPortName(portName);
         if (serialPort.open(QIODevice::ReadWrite)) {
+            emit connectionResult(1);
+
             qDebug() << "Connected to" << portName;
             // Запускаем таймер
             readTimer.start(100); // Читаем данные из порта каждую секунду
         } else {
+            emit connectionResult(0);
+
             qDebug() << "Failed to connect to" << portName;
         }
     }

@@ -19,6 +19,7 @@
 #define PLOT_RIGHT_Z 4.9
 
 #define INHIBITOR 0.1
+#define ERROR 0.2
 
 #define POS_Y 1.0       // Задает координату якоря Y
 #define POS_Z 1.0       // Задает координату якоря Z
@@ -47,7 +48,7 @@ public:
             connect(&timer, &QTimer::timeout, this, &TestGenerator::generateDistances);
         }
 
-        timer.start(33); // Запускаем таймер, генерация каждые 33 миллисекунд примерно 30 кадров в секунду
+//        timer.start(33); // Запускаем таймер, генерация каждые 33 миллисекунд примерно 30 кадров в секунду
     }
 
     int gen_sign_x = 1;
@@ -91,7 +92,10 @@ public slots:
             gen_sign_z = -1;
         gp.z = gp.z + gen_sign_z * dz;
 //        qDebug() << "new coordinate: " << x << " ; " << y << " ; " << z;
-
+        // Координаты точки
+        gp.x = 0.5;
+        gp.y = 0.4;
+        gp.z = 0.5;
         emit coordinatesGenerated(gp);
     }
 
@@ -107,11 +111,22 @@ public slots:
         double r2 = sqrt(pow(point.x, 2) + pow(point.y - POS_Y, 2) + pow(point.z, 2));
         double r3 = sqrt(pow(point.x, 2) + pow(point.y, 2) + pow(point.z - POS_Z, 2));
         // добавим погрешности
-        r1 += (((double)qrand() / RAND_MAX) * 0.6 - 0.3) * 1;     // +/- 30 см. * 0.5
-        r2 += (((double)qrand() / RAND_MAX) * 0.6 - 0.3) * 1;
-        r3 += (((double)qrand() / RAND_MAX) * 0.6 - 0.3) * 1;
+        r1 += (((double)qrand() / RAND_MAX) * (ERROR * 2) - ERROR) * 1;     // +/- 30 см. * 0.5
+        r2 += (((double)qrand() / RAND_MAX) * (ERROR * 2) - ERROR) * 1;
+        r3 += (((double)qrand() / RAND_MAX) * (ERROR * 2) - ERROR) * 1;
         emit distancesGenerated(r1, r2, r3, 1);
+    }
+
+     void stopGenerating() {
+         if (timer.isActive()) {
+             timer.stop();
+             qDebug() << "Generation stopped.";
+         } else {
+             timer.start(33); // Запускаем таймер, генерация каждые 33 миллисекунды
+             qDebug() << "Generation started.";
+         }
      }
+
 };
 
 #endif // TESTGENERATOR_H

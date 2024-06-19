@@ -116,13 +116,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    // Создание боковых элементов управления
-    QPushButton *button1 = new QPushButton("Нажми\nменя", centralWidget);
-    QPushButton *button2 = new QPushButton("Нажми\nменя", centralWidget);
-    QPushButton *button3 = new QPushButton("Нажми\nменя", centralWidget);
-    QPushButton *button4 = new QPushButton("Нажми\nменя", centralWidget);
-    QPushButton *button5 = new QPushButton("Нажми\nменя", centralWidget);
-    QPushButton *button6 = new QPushButton("Нажми\nменя", centralWidget);
+
 
     // Установите вертикальное растягивание для кнопок
     button1->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
@@ -158,7 +152,7 @@ MainWindow::MainWindow(QWidget *parent)
     gridLayout->addWidget(plot3, 0, 1, 3, 1);  // Первая строка, второй столбец
     gridLayout->addWidget(coordinatesLabel, 3, 1, 3, 1);
     // Увеличим шрифт координат
-    coordinatesLabel->setStyleSheet("font-size: 60pt;");
+    coordinatesLabel->setStyleSheet("font-size: 30pt;");
 //    gridLayout->addWidget(plot4, 3, 1, 3, 1);  // Вторая строка, второй столбец
 
     gridLayout->addWidget(scrollArea, 6, 0, 1, 2);  // Третья строка, первый и второй столбец
@@ -201,6 +195,7 @@ MainWindow::MainWindow(QWidget *parent)
 //        qDebug() << "Generated numbers: x =" << x << ", y =" << y << ", z =" << z;
 //    });
 
+    connect(button3, &QPushButton::clicked, this, &MainWindow::toggleOutputLineVisibility);
 
 }
 

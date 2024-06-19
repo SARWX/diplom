@@ -27,7 +27,7 @@ signals:
     void startTimer();
     void stopTimer();
 
-private slots:
+public slots:
     void processCommand()
     {
         QString command = m_commandLineEdit->text().trimmed();
@@ -60,6 +60,18 @@ private slots:
             }
             m_commandLineEdit->clear();
             scrollToBottom();
+        }
+    }
+
+    void displayConnectionStatus(int status)
+    {
+        if (status == 1)
+        {
+            appendOutput("Устройство подключено");
+        }
+        else
+        {
+            appendOutput("Ошибка при подключении устройства");
         }
     }
 

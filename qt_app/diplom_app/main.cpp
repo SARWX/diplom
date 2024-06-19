@@ -24,7 +24,6 @@ int main(int argc, char *argv[])
 
 
 
-    // ТЕСТИРОВАНИЕ
 
 
     // Создаем тестовый генератор
@@ -34,14 +33,30 @@ int main(int argc, char *argv[])
     // отображать сгенерированные КООРДИНАТЫ
 //    QObject::connect(&generator, &TestGenerator::coordinatesGenerated, &dysplayer, &DataDisplayer::coordinateChanged);
     // переводить координаты в РАССТОЯНИЯ
-//    QObject::connect(&generator, &TestGenerator::coordinatesGenerated, &generator, &TestGenerator::coordinatesToDistances);
+    QObject::connect(&generator, &TestGenerator::coordinatesGenerated, &generator, &TestGenerator::coordinatesToDistances);
     // переводить расстояния в КООРДИАНТЫ через ТРИЛАТЕРАТОР
-//    QObject::connect(&generator, &TestGenerator::distancesGenerated, &trilaterator, &Trilaterator::convertDistance);
+    QObject::connect(&generator, &TestGenerator::distancesGenerated, &trilaterator, &Trilaterator::convertDistance);
 
     // переводить расстояния в КООРДИАНТЫ через ТРИЛАТЕРАТОР
-    QObject::connect(&port, &SerialPortReader::newDataReceived, &trilaterator, &Trilaterator::convertDistance);
+    // ВОТ ЭТО БЫЛО
+//    QObject::connect(&port, &SerialPortReader::newDataReceived, &trilaterator, &Trilaterator::convertDistance);
+
+    // Накапливать расстояния для усреднения
+    QObject::connect(&port, &SerialPortReader::newDataReceived, &trilaterator, &Trilaterator::averageDistance);
+    // переводить расстояния в КООРДИАНТЫ через ТРИЛАТЕРАТОР
+    QObject::connect(&trilaterator, &Trilaterator::avgDistanceReady, &trilaterator, &Trilaterator::convertDistance);
+
+
+
     // отображать ТРИЛАТЕРИРОВАННЫЕ КООРДИНАТЫ
     QObject::connect(&trilaterator, &Trilaterator::coordinateChanged, &dysplayer, &DataDisplayer::coordinateChanged);
+    // отображать статус подключения
+    QObject::connect(&port, &SerialPortReader::connectionResult, &commander, &Commander::displayConnectionStatus);
+
+    // ТЕСТИРОВАНИЕ ВЫВОД в текстовый файл
+    QObject::connect(w.button1, &QPushButton::clicked, &dysplayer, &DataDisplayer::startTesting);
+    QObject::connect(w.button2, &QPushButton::clicked, &dysplayer, &DataDisplayer::stopTesting);
+    QObject::connect(w.button4, &QPushButton::clicked, &generator, &TestGenerator::stopGenerating);
 
 
     w.show();

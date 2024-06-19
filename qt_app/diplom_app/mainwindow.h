@@ -26,12 +26,29 @@ public:
     QLabel *output_line;
     // Скролл для окна вывода
     QScrollArea *scrollArea;
-
-
+    // Создание боковых элементов управления
+    QPushButton *button1 = new QPushButton("Запуск\nестирования");
+    QPushButton *button2 = new QPushButton("Остановка\nтестирования");
+    QPushButton *button3 = new QPushButton("Отобразить\nкоординаты");
+    QPushButton *button4 = new QPushButton("Генерировать\nкоординаты");
+    QPushButton *button5 = new QPushButton("Нажми\nменя");
+    QPushButton *button6 = new QPushButton("Нажми\nменя");
 
 private:
     QVBoxLayout *mainLayout;            // Указатель на вертикальный компоновщик QVBoxLayout (расположение частей)
+
+public slots:
+    void toggleOutputLineVisibility() {
+        if (coordinatesLabel->isVisible()) {
+            coordinatesLabel->hide();
+        } else {
+            coordinatesLabel->show();
+        }
+    }
 };
+
+
+
 
 
 

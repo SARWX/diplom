@@ -3,8 +3,8 @@
 
 #include "coordinates.h"
 
-#define AVG_ARR_SIZE 200     // Размер массива для усреднения
-#define PRED_ARR_SIZE 100     // Размер массива для предсказания
+#define AVG_ARR_SIZE 20     // Размер массива для усреднения
+#define PRED_ARR_SIZE 10     // Размер массива для предсказания
 
 
 class AveragingArray

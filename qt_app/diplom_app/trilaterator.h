@@ -11,6 +11,9 @@
 
 #define SPEED_DELAY 0.1     // Задержка в измененении скорости
 
+#define AVG_DIST_NUM 20
+#define AVG_DIST_NUM_DIST 2
+
 class Trilaterator : public QObject
 {
     Q_OBJECT
@@ -21,6 +24,11 @@ private:
     AveragingArray avg_array{};     // специальный объект для усреднения измеренийы
     coordinates cur_dr;             // текущее перемещение
     double cur_speed;   // текущий вектор скорости
+    // Для усреднения
+//    double cur_r1 = 0.0;
+//    double cur_r2 = 0.0;
+//    double cur_r3 = 0.0;
+//    int cur_num_of_mes = 0;
 
 
 public:
@@ -54,7 +62,8 @@ public:
     };
 
 signals:
-    void coordinateChanged(coordinates point, int point_nimber = 0);
+    void coordinateChanged(coordinates point, float r1, float r2, float r3, int point_nimber = 0);
+    void avgDistanceReady(double r1, double r2, double r3, int point_nimber = 0);
 
 public slots:
     // Слот, который генерирует числа и отправляет сигнал
@@ -68,10 +77,35 @@ public slots:
 //        double speed_dif = to_dist(dr_real - dr);       // длина ветора С УЧЕТОМ ЗНАКА + не успевает - опережает
 //        speed += SPEED_DELAY * speed_dif;
 
-
+        r1 += 0.04;
+        r2 -= 0.13;
+        r3 -= 0.18;
 
 //        coordinates speed_vector = get_speed_vecor();
-        emit coordinateChanged(trilaterate(r1, r2, r3), point_nimber);
+        emit coordinateChanged(trilaterate(r1, r2, r3), r1, r2, r3, point_nimber);
+    }
+
+    // Усреднение расстояний
+    void averageDistance(double r1, double r2, double r3, int point_number) {
+        static double cur_r1 = 0.0;
+        static double cur_r2 = 0.0;
+        static double cur_r3 = 0.0;
+        static int cur_num_of_mes = 0;
+
+        if ( ((r1 < 50.0) && (r2 < 50.0) && (r3 < 50.0))
+                && ((r1 > 0.03) && (r2 > 0.03) && (r3 > 0.03)) ) {
+            cur_r1 += r1;
+            cur_r2 += r2;
+            cur_r3 += r3;
+            cur_num_of_mes += 1;
+            if (cur_num_of_mes >= AVG_DIST_NUM_DIST) {
+                emit avgDistanceReady((cur_r1 / cur_num_of_mes), (cur_r2 / cur_num_of_mes), (cur_r3 / cur_num_of_mes));
+                cur_r1 = 0.0;
+                cur_r2 = 0.0;
+                cur_r3 = 0.0;
+                cur_num_of_mes = 0;
+            }
+        }
     }
 
 };
