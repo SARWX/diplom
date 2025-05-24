@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     // Если роль выбрана — продолжаем запуск приложения
     QString role = roleWindow.selectedRole();
 
-    MainWindow w;
+    MainWindow w(role);
 
     // ВАЖНО: остальной код должен быть ТОЛЬКО здесь
     // Создаем объект dysplayer

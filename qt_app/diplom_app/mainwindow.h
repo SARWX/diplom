@@ -14,7 +14,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(const QString &role, QWidget *parent = nullptr);
     QCustomPlot *plot1 = new QCustomPlot();
     QCustomPlot *plot2 = new QCustomPlot();
     QCustomPlot *plot3 = new QCustomPlot();
@@ -33,9 +33,11 @@ public:
     QPushButton *button4 = new QPushButton("Генерировать\nкоординаты");
     QPushButton *button5 = new QPushButton("Нажми\nменя");
     QPushButton *button6 = new QPushButton("Нажми\nменя");
+    QMap<QString, QPushButton*> buttons;
 
 private:
     QVBoxLayout *mainLayout;            // Указатель на вертикальный компоновщик QVBoxLayout (расположение частей)
+    void setupButtonsForRole(const QString &role);
 
 public slots:
     void toggleOutputLineVisibility() {

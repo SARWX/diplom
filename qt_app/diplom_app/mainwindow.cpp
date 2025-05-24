@@ -11,7 +11,7 @@
 //#include "testgenerator.h"
 
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(const QString &role, QWidget *parent)
     : QMainWindow(parent)
 {
     // Определим разрешение ээкрана
@@ -116,15 +116,19 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
+    buttons["generate_coords"] = new QPushButton("Генерировать\nкоординаты");
+    buttons["action_button"] = new QPushButton(""); // текст зададим позже
 
+        // Настраиваем текст и доступность в зависимости от роли
+        setupButtonsForRole(role);
 
     // Установите вертикальное растягивание для кнопок
     button1->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     button2->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     button3->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     button4->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    button5->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    button6->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    buttons["generate_coords"]->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    buttons["action_button"]->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
     // Командная строка       Перенесена в заголовочынй файл
     lineEdit = new QLineEdit(centralWidget);
@@ -167,8 +171,9 @@ MainWindow::MainWindow(QWidget *parent)
     innerLayout->addWidget(button2, 1, 0);
     innerLayout->addWidget(button3, 2, 0);
     innerLayout->addWidget(button4, 3, 0);
-    innerLayout->addWidget(button5, 4, 0);
-    innerLayout->addWidget(button6, 5, 0);
+    innerLayout->addWidget(buttons["generate_coords"], 4, 0);
+    innerLayout->addWidget(buttons["action_button"], 5, 0);
+
 
     // Скомпануем все элементы
     mainLayout->addLayout(gridLayout, 0, 1);
@@ -197,5 +202,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(button3, &QPushButton::clicked, this, &MainWindow::toggleOutputLineVisibility);
 
+}
+
+void MainWindow::setupButtonsForRole(const QString &role)
+{
+    if (role == "admin") {
+        buttons["action_button"]->setText("Удалить\nзапись");
+        buttons["action_button"]->setEnabled(true);
+    } else if (role == "user") {
+        buttons["action_button"]->setText("Нажми\nменя");
+        buttons["action_button"]->setEnabled(true);
+    } else if (role == "guest") {
+        buttons["action_button"]->setText("Недоступно");
+        buttons["action_button"]->setEnabled(false);
+    }
 }
 
