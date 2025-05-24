@@ -31,8 +31,8 @@ set(PROJECT_SOURCES
         avg_array.h
         comander.h
         SerialPortReader.h
-
-
+        rolewindow.h
+        rolewindow.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

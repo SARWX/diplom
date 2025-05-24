@@ -242,10 +242,11 @@ int RCC_Configuration(void)
 	// 1 - AHB Prescaler = 1
 	RCC_HCLKConfig(RCC_SYSCLK_Div1);		// Настройка HCLK (тактирование AHB)
 	// 2 - PCLK Prescaler = 1
-	RCC_PCLK2Config(RCC_HCLK_Div1);			// Настройка APB2 clock = HCLK (SPI1)
+	RCC_PCLK1Config(RCC_HCLK_Div2);			// Настройка APB2 clock = HCLK (SPI1)
+	RCC_PCLK2Config(RCC_HCLK_Div2);			// Настройка APB2 clock = HCLK (SPI1)
 	// 3 - PLL MUL = 5
 	// 4 - настройка PLLSource Mux = HSI
-	RCC_PLLConfig(RCC_PLLSource_HSI_Div2, RCC_PLLMul_5);
+	RCC_PLLConfig(RCC_PLLSource_HSI_Div2, RCC_PLLMul_10);
 	// 4 - System Clock MUX = PLLCLK
 
 	// Запускаем PLL

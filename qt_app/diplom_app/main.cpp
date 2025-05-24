@@ -5,59 +5,41 @@
 #include "trilaterator.h"
 #include "comander.h"
 #include "SerialPortReader.h"
+#include "rolewindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    RoleWindow roleWindow;
+    if (roleWindow.exec() != QDialog::Accepted) {
+        // Если пользователь не выбрал роль — выходим
+        return 0;
+    }
+
+    // Если роль выбрана — продолжаем запуск приложения
+    QString role = roleWindow.selectedRole();
+
     MainWindow w;
+
+    // ВАЖНО: остальной код должен быть ТОЛЬКО здесь
     // Создаем объект dysplayer
     DataDisplayer dysplayer(w.plot1, w.plot2, w.plot3, w.coordinatesLabel);
-    // Создадим объект trilaterator
     Trilaterator trilaterator{};
-    // Создадим объект Comander
-    Commander commander(w.lineEdit, w.output_line, w.scrollArea); // Инициализируем объект Commander, передавая указатель на lineEdit
-    // Создадим объект SerialPortReader
+    Commander commander(w.lineEdit, w.output_line, w.scrollArea);
     SerialPortReader port(&commander);
-
-
-
-
-
-
-
-
-    // Создаем тестовый генератор
     TestGenerator generator(CoordinatesGenerator);
 
-    // Зададим сигнал-слотовые связи
-    // отображать сгенерированные КООРДИНАТЫ
-//    QObject::connect(&generator, &TestGenerator::coordinatesGenerated, &dysplayer, &DataDisplayer::coordinateChanged);
-    // переводить координаты в РАССТОЯНИЯ
+    // Задаем сигнал-слотовые связи
     QObject::connect(&generator, &TestGenerator::coordinatesGenerated, &generator, &TestGenerator::coordinatesToDistances);
-    // переводить расстояния в КООРДИАНТЫ через ТРИЛАТЕРАТОР
     QObject::connect(&generator, &TestGenerator::distancesGenerated, &trilaterator, &Trilaterator::convertDistance);
-
-    // переводить расстояния в КООРДИАНТЫ через ТРИЛАТЕРАТОР
-    // ВОТ ЭТО БЫЛО
-//    QObject::connect(&port, &SerialPortReader::newDataReceived, &trilaterator, &Trilaterator::convertDistance);
-
-    // Накапливать расстояния для усреднения
     QObject::connect(&port, &SerialPortReader::newDataReceived, &trilaterator, &Trilaterator::averageDistance);
-    // переводить расстояния в КООРДИАНТЫ через ТРИЛАТЕРАТОР
     QObject::connect(&trilaterator, &Trilaterator::avgDistanceReady, &trilaterator, &Trilaterator::convertDistance);
-
-
-
-    // отображать ТРИЛАТЕРИРОВАННЫЕ КООРДИНАТЫ
     QObject::connect(&trilaterator, &Trilaterator::coordinateChanged, &dysplayer, &DataDisplayer::coordinateChanged);
-    // отображать статус подключения
     QObject::connect(&port, &SerialPortReader::connectionResult, &commander, &Commander::displayConnectionStatus);
-
-    // ТЕСТИРОВАНИЕ ВЫВОД в текстовый файл
     QObject::connect(w.button1, &QPushButton::clicked, &dysplayer, &DataDisplayer::startTesting);
     QObject::connect(w.button2, &QPushButton::clicked, &dysplayer, &DataDisplayer::stopTesting);
     QObject::connect(w.button4, &QPushButton::clicked, &generator, &TestGenerator::stopGenerating);
-
 
     w.show();
     return a.exec();

@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "deca_regs.h": "c"
+        "deca_regs.h": "c",
+        "stm32f103xb.h": "c",
+        "deca_device_api.h": "c",
+        "deca_spi.h": "c"
     }
 }

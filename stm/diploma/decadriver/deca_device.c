@@ -2762,6 +2762,7 @@ int dwt_starttx(uint8 mode)
 {
     int retval = DWT_SUCCESS ;
     uint8 temp  = 0x00;
+    temp+=10;
     uint16 checkTxOK = 0 ;
 
     if(mode & DWT_RESPONSE_EXPECTED)
