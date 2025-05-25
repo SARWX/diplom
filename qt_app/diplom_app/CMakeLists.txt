@@ -15,6 +15,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets PrintSupport REQUIRED)
 find_package(Qt5 COMPONENTS SerialPort REQUIRED)
+find_package(mongocxx REQUIRED)
+find_package(bsoncxx REQUIRED)
 
 
 set(PROJECT_SOURCES
@@ -33,6 +35,8 @@ set(PROJECT_SOURCES
         SerialPortReader.h
         rolewindow.h
         rolewindow.cpp
+        mongoservice.h
+        mongoservice.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -60,6 +64,10 @@ endif()
 
 target_link_libraries(diplom_app PRIVATE Qt${QT_VERSION_MAJOR}::Widgets PRIVATE Qt${QT_VERSION_MAJOR}::PrintSupport)
 target_link_libraries(diplom_app PRIVATE Qt5::SerialPort)
+target_link_libraries(${PROJECT_NAME}
+    mongocxx::mongocxx
+    bsoncxx::bsoncxx
+)
 
 
 set_target_properties(diplom_app PROPERTIES

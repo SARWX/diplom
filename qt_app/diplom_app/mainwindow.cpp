@@ -116,19 +116,16 @@ MainWindow::MainWindow(const QString &role, QWidget *parent)
 
 
 
-    buttons["generate_coords"] = new QPushButton("Генерировать\nкоординаты");
-    buttons["action_button"] = new QPushButton(""); // текст зададим позже
-
-        // Настраиваем текст и доступность в зависимости от роли
-        setupButtonsForRole(role);
+    setupInterfaceForRole(role);
 
     // Установите вертикальное растягивание для кнопок
     button1->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     button2->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     button3->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     button4->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    buttons["generate_coords"]->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    buttons["action_button"]->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    for (int i = 0; i < role_buttons.size(); ++i) {
+        role_buttons[i]->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    }
 
     // Командная строка       Перенесена в заголовочынй файл
     lineEdit = new QLineEdit(centralWidget);
@@ -171,8 +168,11 @@ MainWindow::MainWindow(const QString &role, QWidget *parent)
     innerLayout->addWidget(button2, 1, 0);
     innerLayout->addWidget(button3, 2, 0);
     innerLayout->addWidget(button4, 3, 0);
-    innerLayout->addWidget(buttons["generate_coords"], 4, 0);
-    innerLayout->addWidget(buttons["action_button"], 5, 0);
+//    innerLayout->addWidget(buttons["generate_coords"], 4, 0);
+//    innerLayout->addWidget(buttons["action_button"], 5, 0);
+    for (int i = 0; i < role_buttons.size(); ++i) {
+        innerLayout->addWidget(role_buttons[i], (4 + i), 0); // кнопки одна под другой
+    }
 
 
     // Скомпануем все элементы
@@ -204,17 +204,52 @@ MainWindow::MainWindow(const QString &role, QWidget *parent)
 
 }
 
-void MainWindow::setupButtonsForRole(const QString &role)
+void MainWindow::setupInterfaceForRole(const QString &role)
 {
+    role_buttons.clear(); // на случай повторной инициализации
+
+    if (role == "duty_officer" || role == "security_specialist" || role == "unit_leader") {
+        // Главная панель мониторинга
+        role_buttons.append(new QPushButton("Карта предприятия"));
+        role_buttons.append(new QPushButton("Индикация нарушений"));
+        role_buttons.append(new QPushButton("Статистика активности"));
+        role_buttons.append(new QPushButton("Последние события"));
+    }
+
+    if (role == "duty_officer" || role == "security_specialist" || role == "unit_leader") {
+        // Журнал нарушений
+        role_buttons.append(new QPushButton("Фильтр нарушений"));
+        role_buttons.append(new QPushButton("Детали нарушения"));
+        role_buttons.append(new QPushButton("Экспорт отчёта"));
+        role_buttons.append(new QPushButton("Добавить комментарий"));
+    }
+
+    if (role == "duty_officer" || role == "security_specialist") {
+        // Модуль "Трекинг объекта"
+        role_buttons.append(new QPushButton("Выбрать объект"));
+        role_buttons.append(new QPushButton("Маршрут на карте"));
+        role_buttons.append(new QPushButton("Сравнить с зонами"));
+    }
+
     if (role == "admin") {
-        buttons["action_button"]->setText("Удалить\nзапись");
-        buttons["action_button"]->setEnabled(true);
-    } else if (role == "user") {
-        buttons["action_button"]->setText("Нажми\nменя");
-        buttons["action_button"]->setEnabled(true);
-    } else if (role == "guest") {
-        buttons["action_button"]->setText("Недоступно");
-        buttons["action_button"]->setEnabled(false);
+        // Правила доступа и зоны
+        role_buttons.append(new QPushButton("Управление зонами"));
+        role_buttons.append(new QPushButton("Настройка правил"));
+        role_buttons.append(new QPushButton("Связь правил с объектами"));
+
+        // Управление пользователями
+        role_buttons.append(new QPushButton("Создать пользователя"));
+        role_buttons.append(new QPushButton("Назначить роли"));
+        role_buttons.append(new QPushButton("Управление доступом"));
+    }
+
+    if (role == "unit_leader" || role == "security_specialist") {
+        // Отчёты и аналитика
+        role_buttons.append(new QPushButton("Сводки по подразделениям"));
+        role_buttons.append(new QPushButton("Нарушения по зонам"));
+        role_buttons.append(new QPushButton("Время в зонах"));
+        role_buttons.append(new QPushButton("Использование оборудования"));
     }
 }
+
 

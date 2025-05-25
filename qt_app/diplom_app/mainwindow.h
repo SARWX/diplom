@@ -37,7 +37,8 @@ public:
 
 private:
     QVBoxLayout *mainLayout;            // Указатель на вертикальный компоновщик QVBoxLayout (расположение частей)
-    void setupButtonsForRole(const QString &role);
+    QVector<QPushButton*> role_buttons;
+    void setupInterfaceForRole(const QString &role);
 
 public slots:
     void toggleOutputLineVisibility() {
