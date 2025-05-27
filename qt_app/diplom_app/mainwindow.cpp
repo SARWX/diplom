@@ -10,6 +10,14 @@
 //#include "datadisplayer.h"
 //#include "testgenerator.h"
 
+#define ADD_ROLE_BUTTON(label, slot)                          \
+do {                                                      \
+        QPushButton *btn = new QPushButton(label);            \
+        connect(btn, &QPushButton::clicked, this, slot);      \
+        role_buttons.append(btn);                             \
+} while (0)
+
+
 
 MainWindow::MainWindow(const QString &role, QWidget *parent)
     : QMainWindow(parent)
@@ -206,50 +214,39 @@ MainWindow::MainWindow(const QString &role, QWidget *parent)
 
 void MainWindow::setupInterfaceForRole(const QString &role)
 {
-    role_buttons.clear(); // на случай повторной инициализации
+    role_buttons.clear();
 
     if (role == "duty_officer" || role == "security_specialist" || role == "unit_leader") {
-        // Главная панель мониторинга
-        role_buttons.append(new QPushButton("Карта предприятия"));
-        role_buttons.append(new QPushButton("Индикация нарушений"));
-        role_buttons.append(new QPushButton("Статистика активности"));
-        role_buttons.append(new QPushButton("Последние события"));
+        ADD_ROLE_BUTTON("Индикация нарушений", &MainWindow::showViolationIndicators);
     }
 
     if (role == "duty_officer" || role == "security_specialist" || role == "unit_leader") {
-        // Журнал нарушений
-        role_buttons.append(new QPushButton("Фильтр нарушений"));
-        role_buttons.append(new QPushButton("Детали нарушения"));
-        role_buttons.append(new QPushButton("Экспорт отчёта"));
-        role_buttons.append(new QPushButton("Добавить комментарий"));
+        ADD_ROLE_BUTTON("Фильтр нарушений", &MainWindow::filterViolations);
+        ADD_ROLE_BUTTON("Детали нарушения", &MainWindow::showViolationDetails);
+        ADD_ROLE_BUTTON("Экспорт отчёта", &MainWindow::exportReport);
+        ADD_ROLE_BUTTON("Добавить комментарий к нарушению", &MainWindow::addViolationComment);
     }
 
     if (role == "duty_officer" || role == "security_specialist") {
-        // Модуль "Трекинг объекта"
-        role_buttons.append(new QPushButton("Выбрать объект"));
-        role_buttons.append(new QPushButton("Маршрут на карте"));
-        role_buttons.append(new QPushButton("Сравнить с зонами"));
+        ADD_ROLE_BUTTON("Выбрать объект", &MainWindow::selectObject);
+        ADD_ROLE_BUTTON("Маршрут на карте", &MainWindow::showRouteOnMap);
     }
 
     if (role == "admin") {
-        // Правила доступа и зоны
-        role_buttons.append(new QPushButton("Управление зонами"));
-        role_buttons.append(new QPushButton("Настройка правил"));
-        role_buttons.append(new QPushButton("Связь правил с объектами"));
+        ADD_ROLE_BUTTON("Управление зонами", &MainWindow::manageZones);
+        ADD_ROLE_BUTTON("Настройка правил", &MainWindow::configureRules);
+        ADD_ROLE_BUTTON("Связь правил с объектами", &MainWindow::linkRulesToObjects);
 
-        // Управление пользователями
-        role_buttons.append(new QPushButton("Создать пользователя"));
-        role_buttons.append(new QPushButton("Назначить роли"));
-        role_buttons.append(new QPushButton("Управление доступом"));
+        ADD_ROLE_BUTTON("Создать пользователя", &MainWindow::createUser);
+        ADD_ROLE_BUTTON("Назначить роли", &MainWindow::assignRoles);
+        ADD_ROLE_BUTTON("Управление доступом к зонам", &MainWindow::manageZoneAccess);
     }
 
     if (role == "unit_leader" || role == "security_specialist") {
-        // Отчёты и аналитика
-        role_buttons.append(new QPushButton("Сводки по подразделениям"));
-        role_buttons.append(new QPushButton("Нарушения по зонам"));
-        role_buttons.append(new QPushButton("Время в зонах"));
-        role_buttons.append(new QPushButton("Использование оборудования"));
+        ADD_ROLE_BUTTON("Сводки по подразделениям", &MainWindow::showUnitReports);
+        ADD_ROLE_BUTTON("Нарушения по зонам", &MainWindow::violationsByZones);
+        ADD_ROLE_BUTTON("Время в зонах", &MainWindow::timeInZones);
+        ADD_ROLE_BUTTON("Использование оборудования", &MainWindow::equipmentUsage);
     }
 }
-
 

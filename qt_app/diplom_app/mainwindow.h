@@ -40,6 +40,9 @@ private:
     QVector<QPushButton*> role_buttons;
     void setupInterfaceForRole(const QString &role);
 
+
+
+
 public slots:
     void toggleOutputLineVisibility() {
         if (coordinatesLabel->isVisible()) {
@@ -48,9 +51,76 @@ public slots:
             coordinatesLabel->show();
         }
     }
+
+    void showViolationIndicators() {
+        qDebug() << "showViolationIndicators clicked";
+    }
+
+    void filterViolations() {
+        qDebug() << "filterViolations clicked";
+    }
+
+    void showViolationDetails() {
+        qDebug() << "showViolationDetails clicked";
+    }
+
+    void exportReport() {
+        qDebug() << "exportReport clicked";
+    }
+
+    void addViolationComment() {
+        qDebug() << "addViolationComment clicked";
+    }
+
+    void selectObject() {
+        qDebug() << "selectObject clicked";
+    }
+
+    void showRouteOnMap() {
+        qDebug() << "showRouteOnMap clicked";
+    }
+
+    void manageZones() {
+        qDebug() << "manageZones clicked";
+    }
+
+    void configureRules() {
+        qDebug() << "configureRules clicked";
+    }
+
+    void linkRulesToObjects() {
+        qDebug() << "linkRulesToObjects clicked";
+    }
+
+    void createUser() {
+        qDebug() << "createUser clicked";
+    }
+
+    void assignRoles() {
+        qDebug() << "assignRoles clicked";
+    }
+
+    void manageZoneAccess() {
+        qDebug() << "manageZoneAccess clicked";
+    }
+
+    void showUnitReports() {
+        qDebug() << "showUnitReports clicked";
+    }
+
+    void violationsByZones() {
+        qDebug() << "violationsByZones clicked";
+    }
+
+    void timeInZones() {
+        qDebug() << "timeInZones clicked";
+    }
+
+    void equipmentUsage() {
+        qDebug() << "equipmentUsage clicked";
+    }
+
 };
-
-
 
 
 
