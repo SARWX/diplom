@@ -69,7 +69,7 @@ public slots:
     void generateCoordinates() {
 
         // Сгенерировать X
-        double dx = INHIBITOR * (double)qrand() / RAND_MAX;
+        double dx = INHIBITOR * (double)std::rand() / RAND_MAX;
         if (gp.x < PLOT_LEFT_X)
             gen_sign_x = 1;
         else if (gp.x > PLOT_RIGHT_X)
@@ -77,7 +77,7 @@ public slots:
         gp.x = gp.x + gen_sign_x * dx;
 
         // Сгенерировать Y
-        double dy = INHIBITOR * (double)qrand() / RAND_MAX;
+        double dy = INHIBITOR * (double)std::rand() / RAND_MAX;
         if (gp.y < PLOT_LEFT_Y)
             gen_sign_y = 1;
         else if (gp.y > PLOT_RIGHT_Y)
@@ -85,7 +85,7 @@ public slots:
         gp.y = gp.y + gen_sign_y * dy;
 
         // Сгенерировать Z
-        double dz = INHIBITOR * (double)qrand() / RAND_MAX;
+        double dz = INHIBITOR * (double)std::rand() / RAND_MAX;
         if (gp.z < PLOT_LEFT_Z)
             gen_sign_z = 1;
         else if (gp.z > PLOT_RIGHT_Z)
@@ -111,9 +111,9 @@ public slots:
         double r2 = sqrt(pow(point.x, 2) + pow(point.y - POS_Y, 2) + pow(point.z, 2));
         double r3 = sqrt(pow(point.x, 2) + pow(point.y, 2) + pow(point.z - POS_Z, 2));
         // добавим погрешности
-        r1 += (((double)qrand() / RAND_MAX) * (ERROR * 2) - ERROR) * 1;     // +/- 30 см. * 0.5
-        r2 += (((double)qrand() / RAND_MAX) * (ERROR * 2) - ERROR) * 1;
-        r3 += (((double)qrand() / RAND_MAX) * (ERROR * 2) - ERROR) * 1;
+        r1 += (((double)std::rand() / RAND_MAX) * (ERROR * 2) - ERROR) * 1;     // +/- 30 см. * 0.5
+        r2 += (((double)std::rand() / RAND_MAX) * (ERROR * 2) - ERROR) * 1;
+        r3 += (((double)std::rand() / RAND_MAX) * (ERROR * 2) - ERROR) * 1;
         emit distancesGenerated(r1, r2, r3, 1);
     }
 

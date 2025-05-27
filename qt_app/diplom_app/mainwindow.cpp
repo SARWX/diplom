@@ -5,7 +5,7 @@
 #include <QLabel>
 #include <QScrollArea>
 #include <QApplication>
-#include <QDesktopWidget>
+#include <QScreen>
 #include "qcustomplot.h"
 //#include "datadisplayer.h"
 //#include "testgenerator.h"
@@ -15,8 +15,8 @@ MainWindow::MainWindow(const QString &role, QWidget *parent)
     : QMainWindow(parent)
 {
     // Определим разрешение ээкрана
-    QDesktopWidget *desktop = QApplication::desktop();
-    QRect screenGeometry = desktop->screenGeometry();
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
     int screenWidth = screenGeometry.width();
     int screenHeight = screenGeometry.height();
 

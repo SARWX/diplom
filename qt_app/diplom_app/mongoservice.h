@@ -18,7 +18,8 @@ public:
 
     bool connectToDatabase(const QString &uri, const QString &dbName);
     std::vector<bsoncxx::document::value> getViolations();
-    void logEvent(const QString &event);
+    // void logEvent(const QString &event);
+    bool insertViolation(const QString &type, int severity);
 
 signals:
     void connectionSucceeded();

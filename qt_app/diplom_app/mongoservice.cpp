@@ -1,4 +1,8 @@
 #include "mongoservice.h"
+#include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/types.hpp>
+#include <chrono>
+#include <QDebug>
 
 MongoService::MongoService(QObject *parent)
     : QObject(parent), client(nullptr)
@@ -30,11 +34,26 @@ std::vector<bsoncxx::document::value> MongoService::getViolations()
     return result;
 }
 
-void MongoService::logEvent(const QString &event)
+bool MongoService::insertViolation(const QString &type, int severity)
 {
-    auto collection = db["events"];
-    bsoncxx::builder::stream::document document{};
-    document << "event" << event.toStdString()
-             << "timestamp" << bsoncxx::types::b_date(std::chrono::system_clock::now());
-    collection.insert_one(document.view());
+    try {
+        auto collection = db["violations"];
+
+        // Создание BSON-документа через basic::document
+        bsoncxx::builder::basic::document doc_builder;
+        doc_builder.append(
+            bsoncxx::builder::basic::kvp("type", type.toStdString()),
+            bsoncxx::builder::basic::kvp("severity", severity),
+            bsoncxx::builder::basic::kvp("timestamp", bsoncxx::types::b_date(std::chrono::system_clock::now()))
+            );
+
+        // Вставка
+        collection.insert_one(doc_builder.view());
+
+        return true;
+    } catch (const std::exception &e) {
+        qDebug() << "Insert failed:" << e.what();
+        return false;
+    }
 }
+
