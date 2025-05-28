@@ -8,6 +8,7 @@
 //#include "datadisplayer.h"
 #include "testgenerator.h"
 #include "qcustomplot.h"
+#include "violation_log.h"
 
 class MainWindow : public QMainWindow
 {
@@ -54,6 +55,19 @@ public slots:
 
     void showViolationIndicators() {
         qDebug() << "showViolationIndicators clicked";
+
+        QList<ViolationLogEntry> violations = loadViolationsFromMongo();
+
+        for (const auto& entry : violations) {
+            qDebug() << "Violation:";
+            qDebug() << "  ID: " << entry.id;
+            qDebug() << "  Object ID: " << entry.object_id;
+            qDebug() << "  Sector ID: " << entry.sector_id;
+            qDebug() << "  Movement Rule ID: " << entry.movement_rule_id;
+            qDebug() << "  Severity: " << entry.severity;
+            qDebug() << "  Timestamp: " << entry.timestamp.toString(Qt::ISODate);
+            qDebug() << "  Coordinates: (" << entry.coords.x << "," << entry.coords.y << "," << entry.coords.z << ")";
+        }
     }
 
     void filterViolations() {

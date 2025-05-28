@@ -76,6 +76,7 @@ set(PROJECT_SOURCES
 qt_add_executable(diplom_app
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    violation_log.h
 )
 
 # Линковка с Qt6 и MongoDB

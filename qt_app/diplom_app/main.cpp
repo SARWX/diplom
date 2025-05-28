@@ -10,11 +10,39 @@
 #include "mongoservice.h"
 #include <QTimer>
 
+#include <iostream>
+
+#include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/json.hpp>
+
+#include <mongocxx/client.hpp>
+#include <mongocxx/exception/exception.hpp>
+#include <mongocxx/instance.hpp>
+#include <mongocxx/uri.hpp>
+
+#include <chrono>
+
+int insertTestViolation();
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    // 1. Подключиться к б.д.
+    MongoService mongo;
+
+    const QString uri = "mongodb://localhost:27017";  // Подставь свой URI при необходимости
+    const QString dbName = "testdb";
+
+    if (!mongo.connectToDatabase(uri, dbName)) {
+        qCritical() << "Не удалось подключиться к базе данных.";
+        return -1;
+    }
+
+    // 1.5 ТЕСТЫ ДЛЯ БАЗЫ ДАННЫХ
+    insertTestViolation();
+
+    // 2. Определить роль пользователя
     RoleWindow roleWindow;
     if (roleWindow.exec() != QDialog::Accepted) {
         // Если пользователь не выбрал роль — выходим
@@ -81,3 +109,47 @@ int main(int argc, char *argv[])
 
 //     return a.exec();
 // }
+
+
+// ================ TEST ONLY =================== //
+using bsoncxx::builder::basic::kvp;
+using bsoncxx::builder::basic::make_document;
+
+int insertTestViolation() {
+    try {
+        mongocxx::instance instance{};
+        mongocxx::uri uri("mongodb://localhost:27017");  // или твой URI
+        mongocxx::client client(uri);
+
+        auto database = client["lps"];
+        auto collection = database["violation_log"];
+
+        auto result = collection.insert_one(
+            make_document(
+                kvp("id", "test_violation_001"),
+                kvp("object_id", "obj_123"),
+                kvp("sector_id", "sector_A1"),
+                kvp("movement_rule_id", "rule_99"),
+                kvp("severity", 3),
+                kvp("timestamp", bsoncxx::types::b_date(std::chrono::system_clock::now())),
+                kvp("coords", make_document(
+                                  kvp("x", 100.0),
+                                  kvp("y", 200.0),
+                                  kvp("z", 0.0)
+                                  ))
+                )
+            );
+
+        if (result) {
+            std::cout << "Inserted document ID: "
+                      << result->inserted_id().get_oid().value.to_string()
+                      << std::endl;
+        }
+
+    } catch (const mongocxx::exception& e) {
+        std::cout << "An exception occurred: " << e.what() << "\n";
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
