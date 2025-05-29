@@ -1,19 +1,40 @@
 cmake_minimum_required(VERSION 3.21)  # для поддержки qt_add_executable
 
-# Поддержка vcpkg toolchain
-set(CMAKE_TOOLCHAIN_FILE "D:/programming/vcpkg/scripts/buildsystems/vcpkg.cmake"
-    CACHE STRING "Vcpkg toolchain file")
-
-# Используем toolchain из переменной среды
-if(DEFINED ENV{VCPKG_ROOT})
-    message(STATUS "Using vcpkg from $ENV{VCPKG_ROOT}")
-    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        CACHE STRING "" FORCE)
+# Поддержка vcpkg toolchain (кроссплатформенная версия)
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+    # Настройки для Windows
+    set(DEFAULT_VCPKG_ROOT "D:/programming/vcpkg")
+    set(DEFAULT_TRIPLET "x64-windows")
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    # Настройки для Linux
+    set(DEFAULT_VCPKG_ROOT "/home/tnovikov/study/vcpkg")
+    set(DEFAULT_TRIPLET "x64-linux")
 else()
-    message(FATAL_ERROR "VCPKG_ROOT is not defined")
+    message(FATAL_ERROR "Unsupported platform: ${CMAKE_HOST_SYSTEM_NAME}")
 endif()
-set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "")
-# set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "")
+
+# Проверка переменной окружения VCPKG_ROOT
+if(DEFINED ENV{VCPKG_ROOT})
+    message(STATUS "Using vcpkg from environment: $ENV{VCPKG_ROOT}")
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        CACHE STRING "Vcpkg toolchain file" FORCE)
+else()
+    message(STATUS "Using default vcpkg path: ${DEFAULT_VCPKG_ROOT}")
+    set(CMAKE_TOOLCHAIN_FILE "${DEFAULT_VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        CACHE STRING "Vcpkg toolchain file" FORCE)
+endif()
+
+# Автоматический выбор triplet
+if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+    set(VCPKG_TARGET_TRIPLET "${DEFAULT_TRIPLET}" CACHE STRING "Vcpkg target triplet")
+endif()
+
+message(STATUS "Using vcpkg triplet: ${VCPKG_TARGET_TRIPLET}")
+
+# Дополнительные проверки
+if(NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}")
+    message(FATAL_ERROR "Vcpkg toolchain file not found at: ${CMAKE_TOOLCHAIN_FILE}")
+endif()
 
 project(diplom_app VERSION 0.1 LANGUAGES CXX)
 
@@ -26,17 +47,17 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)  # Qt6 требует минимум C++17
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Логгирование
+# # Логгирование
 message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 message(STATUS "VCPKG_TARGET_TRIPLET: ${VCPKG_TARGET_TRIPLET}")
 
-message(STATUS "ENV{VCPKG_ROOT} = $ENV{VCPKG_ROOT}")
-message(STATUS "ENV{PATH} = $ENV{PATH}")
+# message(STATUS "ENV{VCPKG_ROOT} = $ENV{VCPKG_ROOT}")
+# message(STATUS "ENV{PATH} = $ENV{PATH}")
 
 # Qt 6
 find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport SerialPort)
 
-message(STATUS "CMAKE_TOOLCHAIN_FILE: -D ${CMAKE_TOOLCHAIN_FILE} ENV: $ENV{CMAKE_TOOLCHAIN_FILE}")
+# message(STATUS "CMAKE_TOOLCHAIN_FILE: -D ${CMAKE_TOOLCHAIN_FILE} ENV: $ENV{CMAKE_TOOLCHAIN_FILE}")
 # set(CMAKE_FIND_DEBUG_MODE TRUE)
 # set(ENV{VCPKG_TRACE_FIND_PACKAGE} "ON")
 
@@ -70,6 +91,8 @@ set(PROJECT_SOURCES
     rolewindow.cpp
     mongoservice.h
     mongoservice.cpp
+    violation_log.h
+    violation_log.cpp
 )
 
 # Создание исполняемого файла
