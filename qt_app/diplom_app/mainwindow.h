@@ -7,10 +7,11 @@
 #include <QGraphicsScene>
 #include "testgenerator.h"
 #include "qcustomplot.h"
-#include "violation_log.h"
+#include "mongodb/violation_log/violation_log.h"
 #include "datadisplayer.h"
 #include "globals.h"
-#include "filterdialog.h"
+#include "mongodb/violation_log/filterdialog.h"
+#include "mongodb/text_database_displayer.h"
 
 class MainWindow : public QMainWindow
 {
@@ -43,8 +44,8 @@ private:
     QVector<QPushButton*> role_buttons;
     void setupInterfaceForRole(const QString &role);
     void displayViolations(const QList<ViolationLogEntry>& violations);
-
-
+    QList<ViolationLogEntry> getFilteredViolations();
+    TextDataBaseDisplayer* m_textDataBaseDisplayer;
 
 public slots:
     void toggleOutputLineVisibility() {
@@ -94,36 +95,20 @@ public slots:
     //     displayViolations(filtered);
     // }
 
-    void filterViolations() {
-        qDebug() << "filterViolations clicked";
-
-        FilterDialog dialog(this);  // this — указатель на родительское окно (MainWindow)
-        if (dialog.exec() == QDialog::Accepted) {
-            // Получаем данные из диалога
-            FilterSettings params = dialog.getFilterSettings();  // Структура, которую ты возвращаешь
-
-            QDateTime startTime = params.startTime;
-            QDateTime endTime = params.endTime;
-            QString sectorId = params.sectorId;
-            int severityState = params.severity;
-
-            // При необходимости можешь логгировать:
-            qDebug() << "Start:" << startTime << "End:" << endTime << "Sector:" << sectorId << "Severity:" << severityState;
-
-            QList<ViolationLogEntry> filteredViolations = loadViolationsFromMongo(startTime, endTime, sectorId);
-
-            displayViolations(filteredViolations);
-        } else {
-            qDebug() << "User cancelled filter dialog.";
-        }
+    // Обработка фильтрации с графическим выводом
+    void filterViolations() 
+    {
+        QList<ViolationLogEntry> violations = getFilteredViolations();
+        displayViolations(violations);
     }
 
-
-
-    void showViolationDetails() {
-        qDebug() << "showViolationDetails clicked";
+    // Обработка фильтрации с текстовым выводом
+    void showViolationDetails() 
+    {
+        QList<ViolationLogEntry> violations = getFilteredViolations();
+        QString formattedData = m_textDataBaseDisplayer->prepareViolationsData(violations);
+        m_textDataBaseDisplayer->displayData(formattedData, "Violation Report");
     }
-
     void exportReport() {
         qDebug() << "exportReport clicked";
     }

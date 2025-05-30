@@ -1,19 +1,21 @@
-cmake_minimum_required(VERSION 3.21)  # для поддержки qt_add_executable
+cmake_minimum_required(VERSION 3.21)  # Для поддержки qt_add_executable
 
-# Поддержка vcpkg toolchain (кроссплатформенная версия)
+project(diplom_app VERSION 0.1 LANGUAGES CXX)
+
+# ----------------------------------------
+# --- Настройка vcpkg toolchain -----------
+# ----------------------------------------
+
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-    # Настройки для Windows
     set(DEFAULT_VCPKG_ROOT "D:/programming/vcpkg")
     set(DEFAULT_TRIPLET "x64-windows")
 elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-    # Настройки для Linux
     set(DEFAULT_VCPKG_ROOT "/home/tnovikov/study/vcpkg")
     set(DEFAULT_TRIPLET "x64-linux")
 else()
     message(FATAL_ERROR "Unsupported platform: ${CMAKE_HOST_SYSTEM_NAME}")
 endif()
 
-# Проверка переменной окружения VCPKG_ROOT
 if(DEFINED ENV{VCPKG_ROOT})
     message(STATUS "Using vcpkg from environment: $ENV{VCPKG_ROOT}")
     set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
@@ -24,65 +26,51 @@ else()
         CACHE STRING "Vcpkg toolchain file" FORCE)
 endif()
 
-# Автоматический выбор triplet
 if(NOT DEFINED VCPKG_TARGET_TRIPLET)
     set(VCPKG_TARGET_TRIPLET "${DEFAULT_TRIPLET}" CACHE STRING "Vcpkg target triplet")
 endif()
 
 message(STATUS "Using vcpkg triplet: ${VCPKG_TARGET_TRIPLET}")
 
-# Дополнительные проверки
 if(NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}")
     message(FATAL_ERROR "Vcpkg toolchain file not found at: ${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
-project(diplom_app VERSION 0.1 LANGUAGES CXX)
+# ----------------------------------------
+# --- Общие настройки проекта -------------
+# ----------------------------------------
 
-# include(D:/programming/vcpkg/scripts/buildsystems/vcpkg.cmake)
-
-# Обязательные флаги для Qt
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_STANDARD 17)  # Qt6 требует минимум C++17
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
-# # Логгирование
-message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
-message(STATUS "VCPKG_TARGET_TRIPLET: ${VCPKG_TARGET_TRIPLET}")
-
-# message(STATUS "ENV{VCPKG_ROOT} = $ENV{VCPKG_ROOT}")
-# message(STATUS "ENV{PATH} = $ENV{PATH}")
-
-# Qt 6
-find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport SerialPort)
-
-# message(STATUS "CMAKE_TOOLCHAIN_FILE: -D ${CMAKE_TOOLCHAIN_FILE} ENV: $ENV{CMAKE_TOOLCHAIN_FILE}")
-# set(CMAKE_FIND_DEBUG_MODE TRUE)
-# set(ENV{VCPKG_TRACE_FIND_PACKAGE} "ON")
-
-
-# set(mongocxx_DIR "D:/programming/vcpkg/installed/x64-windows/share/mongocxx")
-# set(bsoncxx_DIR "D:/programming/vcpkg/installed/x64-windows/share/bsoncxx")
-# MongoDB C++ драйвер
-# set(BSONCXX_STATIC ON)
-# set(MONGOCXX_STATIC ON)
+# Включаем дебаг поиска пакетов (при необходимости, можно закомментировать)
 set(CMAKE_FIND_DEBUG_MODE TRUE)
+
+# ----------------------------------------
+# --- Поиск библиотек ---------------------
+# ----------------------------------------
+
+find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport SerialPort)
 
 find_package(bsoncxx CONFIG REQUIRED)
 find_package(mongocxx CONFIG REQUIRED)
 
-# qt_wrap_ui(UI_HEADERS filterdialog.ui)
-set(CMAKE_AUTOUIC ON)
+# ----------------------------------------
+# --- Источники проекта -------------------
+# ----------------------------------------
 
-# Исходные файлы
 set(PROJECT_SOURCES
     main.cpp
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
-    lib/qcustomplot.h
+
     lib/qcustomplot.cpp
+    lib/qcustomplot.h
+
     datadisplayer.h
     testgenerator.h
     trilaterator.h
@@ -90,54 +78,64 @@ set(PROJECT_SOURCES
     avg_array.h
     comander.h
     SerialPortReader.h
-    rolewindow.h
+
     rolewindow.cpp
-    mongoservice.h
-    mongoservice.cpp
-    violation_log.h
-    violation_log.cpp
-    filterdialog.ui
+    rolewindow.h
+
+    mongodb/mongoservice.cpp
+    mongodb/mongoservice.h
+
+    mongodb/violation_log/violation_log.cpp
+    mongodb/violation_log/violation_log.h
+    mongodb/violation_log/filterdialog.cpp
+    mongodb/violation_log/filterdialog.h
+    mongodb/violation_log/filterdialog.ui
+
+    mongodb/test_database.js
+    globals.h
 )
 
-# Создание исполняемого файла
+# ----------------------------------------
+# --- Создание исполняемого файла --------
+# ----------------------------------------
+
 qt_add_executable(diplom_app
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
-    violation_log.h
-    globals.h
-    filterdialog.h
-    filterdialog.cpp
-    test_database.js
+    mongodb/text_database_displayer.h
+    mongodb/text_database_displayer.cpp
 )
 
-# Линковка с Qt6 и MongoDB
-target_link_libraries(diplom_app
-    PRIVATE Qt6::Widgets
-    PRIVATE Qt6::PrintSupport
-    PRIVATE Qt6::SerialPort
-    # PRIVATE mongocxx::mongocxx
-    # PRIVATE bsoncxx::bsoncxx
-    # PRIVATE mongocxx::mongocxx_static
-    # PRIVATE bsoncxx::bsoncxx_static
-)
-target_link_libraries(diplom_app PRIVATE $<IF:$<TARGET_EXISTS:mongo::bsoncxx_static>,mongo::bsoncxx_static,mongo::bsoncxx_shared>)
-target_link_libraries(diplom_app PRIVATE $<IF:$<TARGET_EXISTS:mongo::mongocxx_static>,mongo::mongocxx_static,mongo::mongocxx_shared>)
-get_target_property(LINKED_LIBS diplom_app LINK_LIBRARIES)
-message(STATUS "Linked libraries for diplom_app: ${LINKED_LIBS}")
-
-
-# Метаданные для macOS (можно оставить — не мешает)
-set_target_properties(diplom_app PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-)
+# ----------------------------------------
+# --- Подключение include директорий ------
+# ----------------------------------------
 
 target_include_directories(diplom_app PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/lib
+    # ${CMAKE_CURRENT_SOURCE_DIR}/mongodb
+    # ${CMAKE_CURRENT_SOURCE_DIR}/mongodb/violation_log
 )
 
+# ----------------------------------------
+# --- Линковка с библиотеками --------------
+# ----------------------------------------
 
-# Финализация (только для Qt6)
+target_link_libraries(diplom_app PRIVATE
+    Qt6::Widgets
+    Qt6::PrintSupport
+    Qt6::SerialPort
+
+    $<IF:$<TARGET_EXISTS:mongo::bsoncxx_static>,mongo::bsoncxx_static,mongo::bsoncxx_shared>
+    $<IF:$<TARGET_EXISTS:mongo::mongocxx_static>,mongo::mongocxx_static,mongo::mongocxx_shared>
+)
+
+# Вывод связанных библиотек для отладки
+get_target_property(LINKED_LIBS diplom_app LINK_LIBRARIES)
+message(STATUS "Linked libraries for diplom_app: ${LINKED_LIBS}")
+
+# ----------------------------------------
+# --- Финализация Qt проекта ---------------
+# ----------------------------------------
+
 qt_finalize_executable(diplom_app)

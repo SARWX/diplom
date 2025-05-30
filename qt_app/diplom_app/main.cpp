@@ -7,7 +7,7 @@
 #include "SerialPortReader.h"
 #include "rolewindow.h"
 #include <QCoreApplication>
-#include "mongoservice.h"
+#include "mongodb/mongoservice.h"
 #include <QTimer>
 
 #include <iostream>

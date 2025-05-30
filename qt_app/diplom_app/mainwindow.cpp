@@ -7,6 +7,7 @@
 #include <QApplication>
 #include <QScreen>
 #include "qcustomplot.h"
+#include "mongodb/text_database_displayer.h"
 //#include "datadisplayer.h"
 //#include "testgenerator.h"
 
@@ -207,6 +208,9 @@ MainWindow::MainWindow(const QString &role, QWidget *parent)
 
     centralWidget->setLayout(mainLayout);
 
+    m_textDataBaseDisplayer = new TextDataBaseDisplayer(this);
+
+
 
     // Задаем связи с backend
 
@@ -295,4 +299,18 @@ void MainWindow::displayViolations(const QList<ViolationLogEntry>& violations) {
     plot3->replot();
 }
 
-
+// Общая функция для получения отфильтрованных нарушений
+QList<ViolationLogEntry> MainWindow::getFilteredViolations()
+{
+    FilterDialog dialog(this);
+    if (dialog.exec() != QDialog::Accepted) {
+        qDebug() << "User cancelled filter dialog.";
+        return QList<ViolationLogEntry>();
+    }
+    
+    FilterSettings params = dialog.getFilterSettings();
+    qDebug() << "Filter params:" << params.startTime << params.endTime 
+             << params.sectorId << params.severity;
+    
+    return loadViolationsFromMongo(params.startTime, params.endTime, params.sectorId);
+}
