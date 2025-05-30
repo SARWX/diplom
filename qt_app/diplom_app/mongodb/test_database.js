@@ -201,7 +201,7 @@ db.movement_rule.insertMany([
 db.violation_log.insertMany([
   {
     _id: "viol_001",
-    object_id: "obj_vis_01",
+    object_id: "obj_001",
     sector_id: "sect_smd_placement",
     movement_rule_id: "rule_001",
     severity: 3,
@@ -214,7 +214,7 @@ db.violation_log.insertMany([
   },
   {
     _id: "viol_002",
-    object_id: "obj_chem_bot_01",
+    object_id: "obj_002",
     sector_id: "sect_chem_zone",
     movement_rule_id: "rule_002",
     severity: 2,
@@ -227,7 +227,7 @@ db.violation_log.insertMany([
   },
   {
     _id: "viol_003",
-    object_id: "obj_eng_01",
+    object_id: "obj_003",
     sector_id: "sect_soldering",
     movement_rule_id: "rule_003",
     severity: 1,
@@ -240,7 +240,7 @@ db.violation_log.insertMany([
   },
   {
     _id: "viol_004",
-    object_id: "obj_eng_02",
+    object_id: "obj_004",
     sector_id: "sect_soldering",
     movement_rule_id: "rule_003",
     severity: 1,
@@ -253,7 +253,7 @@ db.violation_log.insertMany([
   },
   {
     _id: "viol_005",
-    object_id: "obj_eq_01",
+    object_id: "obj_004",
     sector_id: "sect_common",
     movement_rule_id: "rule_004",
     severity: 2,
@@ -266,7 +266,7 @@ db.violation_log.insertMany([
   },
   {
     _id: "viol_006",
-    object_id: "obj_operator_01",
+    object_id: "obj_005",
     sector_id: "sect_chem_zone",
     movement_rule_id: "rule_005",
     severity: 2,
@@ -279,7 +279,7 @@ db.violation_log.insertMany([
   },
   {
     _id: "viol_007",
-    object_id: "obj_operator_02",
+    object_id: "obj_001",
     sector_id: "sect_chem_zone",
     movement_rule_id: "rule_005",
     severity: 2,
@@ -292,7 +292,7 @@ db.violation_log.insertMany([
   },
   {
     _id: "viol_008",
-    object_id: "obj_vis_02",
+    object_id: "obj_002",
     sector_id: "sect_smd_placement",
     movement_rule_id: "rule_001",
     severity: 3,
@@ -305,7 +305,7 @@ db.violation_log.insertMany([
   },
   {
     _id: "viol_009",
-    object_id: "obj_eq_02",
+    object_id: "obj_003",
     sector_id: "sect_common",
     movement_rule_id: "rule_004",
     severity: 1,
@@ -318,7 +318,7 @@ db.violation_log.insertMany([
   },
   {
     _id: "viol_010",
-    object_id: "obj_vis_01",
+    object_id: "obj_004",
     sector_id: "sect_chem_zone",
     movement_rule_id: "rule_005",
     severity: 3,

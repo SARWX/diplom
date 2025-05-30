@@ -20,6 +20,10 @@ public:
     std::vector<bsoncxx::document::value> getViolations();
     // void logEvent(const QString &event);
     bool insertViolation(const QString &type, int severity);
+    static  QMap<QString, QString> getMongoFieldMap(
+        const QString& collectionName, 
+        const QString& keyField, 
+        const QString& valueField);
 
 signals:
     void connectionSucceeded();

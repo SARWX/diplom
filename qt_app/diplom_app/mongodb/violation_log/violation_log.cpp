@@ -5,7 +5,7 @@ ViolationLogEntry::ViolationLogEntry(const bsoncxx::document::view& doc) {
     using namespace bsoncxx;
 
     // Строка "id"
-    if (auto elem = doc["id"]; elem) {
+    if (auto elem = doc["_id"]; elem) {
         types::b_string str = elem.get_string();
         id = QString::fromStdString(std::string(str.value));
     }

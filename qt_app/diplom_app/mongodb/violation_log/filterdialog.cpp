@@ -1,4 +1,5 @@
 #include "mongodb/violation_log/filterdialog.h"
+#include "mongodb/mongoservice.h"
 #include "ui_filterdialog.h"
 // MongoDB BSON
 #include <bsoncxx/document/view.hpp>
@@ -18,7 +19,8 @@ FilterDialog::FilterDialog(QWidget *parent) :
     ui(new Ui::FilterDialog)
 {
     ui->setupUi(this);
-    sectors_map = getSectorIdMapFromMongo();
+    // sectors_map = getSectorIdMapFromMongo();
+    QMap<QString, QString> sectors_map = MongoService::getMongoFieldMap("sector", "name", "_id");
 
     ui->startDateTimeEdit->setDateTime(QDateTime::currentDateTime().addDays(-1));
     ui->endDateTimeEdit->setDateTime(QDateTime::currentDateTime());
@@ -50,36 +52,28 @@ FilterSettings FilterDialog::getFilterSettings() const
     return settings;
 }
 
-QMap<QString, QString> FilterDialog::getSectorIdMapFromMongo()
-{
-    QMap<QString, QString> sectorMap;
+// QMap<QString, QString> FilterDialog::getSectorIdMapFromMongo()
+// {
+//     QMap<QString, QString> sectorMap;
 
-    mongocxx::client client{mongocxx::uri{}};
-    auto db = client["lps"];
-    auto collection = db["sector"];
+//     mongocxx::client client{mongocxx::uri{}};
+//     auto db = client["lps"];
+//     auto collection = db["sector"];
 
-    auto cursor = collection.find({});  // Найдём все документы в коллекции
+//     auto cursor = collection.find({});  // Найдём все документы в коллекции
 
-    for (const auto& doc : cursor) {
-        // Проверим, что есть нужные поля
-        if (doc["name"] && doc["_id"]) {
-            // auto name = QString::fromStdString(doc["name"].get_string());    // OLD VARIANT
-            bsoncxx::types::b_string str = doc["name"].get_string();
-            QString name = QString::fromStdString(std::string(str.value));
+//     for (const auto& doc : cursor) {
+//         // Проверим, что есть нужные поля
+//         if (doc["name"] && doc["_id"]) {
+//             bsoncxx::types::b_string str = doc["name"].get_string();
+//             QString name = QString::fromStdString(std::string(str.value));
         
-            // auto id = QString::fromStdString(bsoncxx::to_json(doc["_id"]));  // _id как JSON-строка
-            str = doc["_id"].get_string();
-            QString id = QString::fromStdString(std::string(str.value));
+//             str = doc["_id"].get_string();
+//             QString id = QString::fromStdString(std::string(str.value));
 
+//             sectorMap.insert(name, id);
+//         }
+//     }
 
-            // // Но лучше привести _id к строке без {...} если это ObjectId
-            // if (doc["_id"].type() == bsoncxx::type::k_oid) {
-            //     id = QString::fromStdString(doc["_id"].get_oid().value.to_string());
-            // }
-
-            sectorMap.insert(name, id);
-        }
-    }
-
-    return sectorMap;
-}
+//     return sectorMap;
+// }

@@ -57,3 +57,31 @@ bool MongoService::insertViolation(const QString &type, int severity)
     }
 }
 
+QMap<QString, QString> MongoService::getMongoFieldMap(
+    const QString& collectionName, 
+    const QString& keyField, 
+    const QString& valueField)
+{
+    QMap<QString, QString> resultMap;
+
+    mongocxx::client client{mongocxx::uri{}};
+    auto db = client["lps"];
+    auto collection = db[collectionName.toStdString()];
+
+    auto cursor = collection.find({});
+
+    for (const auto& doc : cursor) {
+        if (doc[keyField.toStdString()] && doc[valueField.toStdString()]) {
+            bsoncxx::types::b_string keyStr = doc[keyField.toStdString()].get_string();
+            bsoncxx::types::b_string valueStr = doc[valueField.toStdString()].get_string();
+            
+            resultMap.insert(
+                QString::fromStdString(std::string(keyStr.value)),
+                QString::fromStdString(std::string(valueStr.value))
+            );
+        }
+    }
+
+    return resultMap;
+}
+

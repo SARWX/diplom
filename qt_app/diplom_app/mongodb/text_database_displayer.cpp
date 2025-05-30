@@ -1,4 +1,5 @@
 #include "mongodb/text_database_displayer.h"
+#include "mongodb/mongoservice.h"
 #include <QDateTime>
 #include <QVBoxLayout>
 
@@ -67,6 +68,15 @@ QString TextDataBaseDisplayer::prepareViolationsData(const QList<ViolationLogEnt
 
 QString TextDataBaseDisplayer::formatViolation(const ViolationLogEntry& violation)
 {
+    QMap<QString, QString> objects_map = MongoService::getMongoFieldMap("object", "_id", "owner_name");
+    qDebug() << "keys: " << objects_map.keys() << "\nvalues: " << objects_map.values();
+    QMap<QString, QString> sectors_map = MongoService::getMongoFieldMap("sector", "_id", "name");
+
+    // Безопасное получение значений с fallback
+    QString object_name = objects_map.value(violation.object_id, "Unknown object");
+    qDebug() << "Ours object_id: " << violation.object_id;
+    QString sector_name = sectors_map.value(violation.sector_id, "Unknown sector");
+
     return QString("<tr>"
                   "<td>%1</td>"
                   "<td>%2</td>"
@@ -76,8 +86,8 @@ QString TextDataBaseDisplayer::formatViolation(const ViolationLogEntry& violatio
                   "<td>%8</td>"
                   "</tr>")
             .arg(violation.id)
-            .arg(violation.object_id)
-            .arg(violation.sector_id)
+            .arg(object_name)
+            .arg(sector_name)
             .arg(violation.timestamp.toString("yyyy-MM-dd HH:mm:ss"))
             .arg(violation.coords.x).arg(violation.coords.y).arg(violation.coords.z)
             .arg(violation.severity);
