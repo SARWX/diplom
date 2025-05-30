@@ -2,7 +2,13 @@
 #include "mongodb/mongoservice.h"
 #include <QDateTime>
 #include <QVBoxLayout>
-
+#include <QPushButton>
+#include <QPrinter>
+#include <QFileDialog>
+#include <QTextDocument>
+#include <QStandardPaths>  // Добавлено для QStandardPaths
+#include <QMessageBox>     // Добавлено для QMessageBox
+#include <QHBoxLayout>     // Добавлено для QHBoxLayout
 TextDataBaseDisplayer::TextDataBaseDisplayer(QObject* parent)
     : QObject(parent)
 {
@@ -17,24 +23,46 @@ void TextDataBaseDisplayer::displayData(const QString& formattedData, const QStr
     
     // Создаем текстовое поле
     QTextEdit* outputWidget = createOutputWidget();
+    outputWidget->setHtml((!title.isEmpty() ? QString("<h2>%1</h2>").arg(title) : "") + formattedData);
+    
+    // Кнопка экспорта в PDF
+    QPushButton* exportBtn = new QPushButton("Export to PDF", dialog);
+    exportBtn->setFixedWidth(120);
     
     // Настраиваем layout
-    QVBoxLayout* layout = new QVBoxLayout(dialog);
-    layout->addWidget(outputWidget);
-    dialog->setLayout(layout);
+    QVBoxLayout* mainLayout = new QVBoxLayout(dialog);
+    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    buttonLayout->addStretch();
+    buttonLayout->addWidget(exportBtn);
     
-    // Форматируем и выводим данные
-    QString output;
-    if (!title.isEmpty()) {
-        output += QString("<h2>%1</h2>").arg(title);
-    }
-    output += formattedData;
-    outputWidget->setHtml(output);
+    mainLayout->addLayout(buttonLayout);
+    mainLayout->addWidget(outputWidget);
     
-    // Показываем немодальное окно (можно закрыть независимо от основного)
+    // Обработчик кнопки экспорта
+    QObject::connect(exportBtn, &QPushButton::clicked, [outputWidget, title]() {
+        QString fileName = QFileDialog::getSaveFileName(
+            nullptr,
+            "Export to PDF",
+            QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + 
+            "/" + (title.isEmpty() ? "violation_report" : title.simplified()) + ".pdf",
+            "PDF Files (*.pdf)");
+        
+        if (!fileName.isEmpty()) {
+            QPrinter printer(QPrinter::HighResolution);
+            printer.setOutputFormat(QPrinter::PdfFormat);
+            printer.setOutputFileName(fileName);
+            printer.setPageMargins(QMarginsF(15, 15, 15, 15));
+            
+            QTextDocument doc;
+            doc.setHtml(outputWidget->toHtml());
+            doc.print(&printer);
+            
+            QMessageBox::information(nullptr, "Export Successful", 
+                                   QString("Report saved to:\n%1").arg(fileName));
+        }
+    });
+    
     dialog->show();
-    
-    // Автоматическое удаление при закрытии
     dialog->setAttribute(Qt::WA_DeleteOnClose);
 }
 
