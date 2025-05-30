@@ -22,6 +22,9 @@
 
 #include <chrono>
 
+#include "globals.h"
+DataDisplayer* g_dataDisplayer = nullptr;
+
 int insertTestViolation();
 
 int main(int argc, char *argv[])
@@ -57,6 +60,7 @@ int main(int argc, char *argv[])
     // ВАЖНО: остальной код должен быть ТОЛЬКО здесь
     // Создаем объект dysplayer
     DataDisplayer dysplayer(w.plot1, w.plot2, w.plot3, w.coordinatesLabel);
+    g_dataDisplayer = &dysplayer;
     Trilaterator trilaterator{};
     Commander commander(w.lineEdit, w.output_line, w.scrollArea);
     SerialPortReader port(&commander);

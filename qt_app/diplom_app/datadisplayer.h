@@ -24,24 +24,38 @@ public:
 public slots:
     // Установить отображение новых координат
     void coordinateChanged (coordinates point, float r1, float r2, float r3, int point_number = 0) {
-        (plot1->graph(point_number))->setData({point.x}, {point.y});
+
+        if (0 <= point_number && point_number < 1000) {
+            // Стандартная часть с отображением текущих координат
+            (plot1->graph(point_number))->setData({point.x}, {point.y});
+            (plot1->graph(1))->setData({point.x}, {point.y});
+
+            (plot2->graph(point_number))->setData({point.x}, {point.z});
+            (plot2->graph(1))->setData({point.x}, {point.z});
+
+            (plot3->graph(point_number))->setData({point.z}, {point.y});
+            (plot3->graph(1))->setData({point.z}, {point.y});
+        } else if (1000 <= point_number && point_number < 2000) {
+            // Нарушения (1000-1999)
+            plot1->graph(2)->addData(point.x, point.y);
+            plot2->graph(2)->addData(point.x, point.z);
+            plot3->graph(2)->addData(point.z, point.y);
+        }
+
+        // Обновляем все графики
         plot1->replot();
-        (plot1->graph(1))->setData({point.x}, {point.y});
-        plot1->replot();
-
-        (plot2->graph(point_number))->setData({point.x}, {point.z});
         plot2->replot();
-        (plot2->graph(1))->setData({point.x}, {point.z});
-        plot2->replot();
-
-        (plot3->graph(point_number))->setData({point.z}, {point.y});
-        plot3->replot();
-        (plot3->graph(1))->setData({point.z}, {point.y});
         plot3->replot();
 
-       coordinatesLabel->setText(QString("X = %1, \nY = %2, \nZ = %3\nR1 = %4\nR2 = %5\nR3 = %6")
-                                 .arg(point.x * 100).arg(point.y * 100).arg(point.z * 100)
-                                 .arg(r1).arg(r2).arg(r3));
+
+
+
+
+        if(point_number == 1) { // Only for real object
+            coordinatesLabel->setText(QString("X = %1, \nY = %2, \nZ = %3\nR1 = %4\nR2 = %5\nR3 = %6")
+                                          .arg(point.x * 100).arg(point.y * 100).arg(point.z * 100)
+                                          .arg(r1).arg(r2).arg(r3));
+        }
 
        // Информация для тестирования
        static QFile xFile("x_data.txt");

@@ -1,4 +1,6 @@
 #include "violation_log.h"
+#include "datadisplayer.h"
+#include "globals.h"
 
 ViolationLogEntry::ViolationLogEntry(const bsoncxx::document::view& doc) {
     using namespace bsoncxx;
@@ -67,7 +69,16 @@ QList<ViolationLogEntry> loadViolationsFromMongo()
 
     auto cursor = collection.find({});
     for (const auto &doc : cursor) {
-        violations.append(ViolationLogEntry(doc));
+        ViolationLogEntry violation = ViolationLogEntry(doc);
+        violations.append(violation);
+        if (g_dataDisplayer) {
+            // Генерация point_number из любой строки id
+            uint point_number = qHash(violation.id) % 1000 + 1000;
+            qDebug() << "point_number: " << point_number;
+
+            // Передаем в дисплей
+            g_dataDisplayer->coordinateChanged(violation.coords, 0, 0, 0, point_number);
+        }
     }
 
     return violations;

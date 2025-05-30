@@ -39,6 +39,9 @@ public:
 
     // Конструктор из BSON-документа
     ViolationLogEntry(const bsoncxx::document::view &doc);
+
+signals:
+    void violationDisplayed(coordinates point, float r1, float r2, float r3, int violation_id = 1000);
 };
 
 QList<ViolationLogEntry> loadViolationsFromMongo();

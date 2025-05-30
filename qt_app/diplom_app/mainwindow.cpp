@@ -75,13 +75,21 @@ MainWindow::MainWindow(const QString &role, QWidget *parent)
     QCPGraph *graph1test = plot1->addGraph();
     QCPGraph *graph2test = plot2->addGraph();
     QCPGraph *graph3test = plot3->addGraph();
+    // Создаем графики (отображения нарушений)
+    QCPGraph *graph1violation = plot1->addGraph();
+    QCPGraph *graph2violation = plot2->addGraph();
+    QCPGraph *graph3violation = plot3->addGraph();
 
     // Настройки стиля графика
     graph1->setLineStyle(QCPGraph::lsNone); // Отключить линии между точками
     graph2->setLineStyle(QCPGraph::lsNone); // Отключить линии между точками
     graph3->setLineStyle(QCPGraph::lsNone); // Отключить линии между точками
+    // Настройки стиля отображения нарушений
+    graph1violation->setLineStyle(QCPGraph::lsNone); // Отключить линии между точками
+    graph2violation->setLineStyle(QCPGraph::lsNone); // Отключить линии между точками
+    graph3violation->setLineStyle(QCPGraph::lsNone); // Отключить линии между точками
 
-    // Создайте объект QCPScatterStyle
+    // Создайте объект QCPScatterStyle - стиль для графика
     QCPScatterStyle scatterStyle;
     scatterStyle.setShape(QCPScatterStyle::ssCircle); // Установите форму точек (круги)
     scatterStyle.setSize(5); // Установите размер точек
@@ -95,6 +103,16 @@ MainWindow::MainWindow(const QString &role, QWidget *parent)
     graph1test->setScatterStyle(scatterStyle);
     graph2test->setScatterStyle(scatterStyle);
     graph3test->setScatterStyle(scatterStyle);
+    // Нарушения (1000-1999)
+    QCPScatterStyle violationStyle;
+    violationStyle.setShape(QCPScatterStyle::ssDisc);  // Сплошной круг
+    violationStyle.setSize(10);                        // Размер точки
+    violationStyle.setPen(QPen(Qt::red, 1.5));         // Красная обводка (толщина 1.5)
+    violationStyle.setBrush(Qt::red);                  // Красная заливк
+    graph1violation->setScatterStyle(violationStyle);
+    graph2violation->setScatterStyle(violationStyle);
+    graph3violation->setScatterStyle(violationStyle);
+    // Траектории движения
 
     // Добавьте точку на график
     double x = 1.0; // Значение по оси X
