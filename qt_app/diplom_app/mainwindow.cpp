@@ -245,8 +245,6 @@ void MainWindow::setupInterfaceForRole(const QString &role)
     if (role == "duty_officer" || role == "security_specialist" || role == "unit_leader") {
         ADD_ROLE_BUTTON("Фильтр нарушений", &MainWindow::filterViolations);
         ADD_ROLE_BUTTON("Детали нарушения", &MainWindow::showViolationDetails);
-        ADD_ROLE_BUTTON("Экспорт отчёта", &MainWindow::exportReport);
-        ADD_ROLE_BUTTON("Добавить комментарий к нарушению", &MainWindow::addViolationComment);
     }
 
     if (role == "duty_officer" || role == "security_specialist") {
@@ -265,8 +263,6 @@ void MainWindow::setupInterfaceForRole(const QString &role)
     }
 
     if (role == "unit_leader" || role == "security_specialist") {
-        ADD_ROLE_BUTTON("Сводки по подразделениям", &MainWindow::showUnitReports);
-        ADD_ROLE_BUTTON("Нарушения по зонам", &MainWindow::violationsByZones);
         ADD_ROLE_BUTTON("Время в зонах", &MainWindow::timeInZones);
         ADD_ROLE_BUTTON("Использование оборудования", &MainWindow::equipmentUsage);
     }

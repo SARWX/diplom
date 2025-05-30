@@ -78,23 +78,6 @@ public slots:
         }
     }
 
-
-    // void filterViolations() {
-    //     qDebug() << "filterViolations clicked";
-
-    //     QList<ViolationLogEntry> all = loadViolationsFromMongo();
-    //     QList<ViolationLogEntry> filtered;
-
-    //     for (const auto& entry : all) {
-    //         // Пример фильтра
-    //         if (entry.severity == 1) {
-    //             filtered.append(entry);
-    //         }
-    //     }
-
-    //     displayViolations(filtered);
-    // }
-
     // Обработка фильтрации с графическим выводом
     void filterViolations() 
     {
@@ -108,13 +91,6 @@ public slots:
         QList<ViolationLogEntry> violations = getFilteredViolations();
         QString formattedData = m_textDataBaseDisplayer->prepareViolationsData(violations);
         m_textDataBaseDisplayer->displayData(formattedData, "Violation Report");
-    }
-    void exportReport() {
-        qDebug() << "exportReport clicked";
-    }
-
-    void addViolationComment() {
-        qDebug() << "addViolationComment clicked";
     }
 
     void selectObject() {
@@ -149,14 +125,6 @@ public slots:
         qDebug() << "manageZoneAccess clicked";
     }
 
-    void showUnitReports() {
-        qDebug() << "showUnitReports clicked";
-    }
-
-    void violationsByZones() {
-        qDebug() << "violationsByZones clicked";
-    }
-
     void timeInZones() {
         qDebug() << "timeInZones clicked";
     }
@@ -166,8 +134,5 @@ public slots:
     }
 
 };
-
-
-
 
 #endif // MAINWINDOW_H

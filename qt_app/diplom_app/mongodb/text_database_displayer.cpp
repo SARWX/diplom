@@ -52,6 +52,7 @@ void TextDataBaseDisplayer::displayData(const QString& formattedData, const QStr
             printer.setOutputFormat(QPrinter::PdfFormat);
             printer.setOutputFileName(fileName);
             printer.setPageMargins(QMarginsF(15, 15, 15, 15));
+            printer.setPageOrientation(QPageLayout::Landscape); // Альбомная ориентация
             
             QTextDocument doc;
             doc.setHtml(outputWidget->toHtml());
