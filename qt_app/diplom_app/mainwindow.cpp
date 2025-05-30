@@ -268,3 +268,31 @@ void MainWindow::setupInterfaceForRole(const QString &role)
     }
 }
 
+void MainWindow::displayViolations(const QList<ViolationLogEntry>& violations) {
+    // Очищаем старые графики
+    plot1->graph(2)->data()->clear();
+    plot2->graph(2)->data()->clear();
+    plot3->graph(2)->data()->clear();
+
+    for (const auto& entry : violations) {
+        qDebug() << "Violation:";
+        qDebug() << "  ID: " << entry.id;
+        qDebug() << "  Object ID: " << entry.object_id;
+        qDebug() << "  Sector ID: " << entry.sector_id;
+        qDebug() << "  Movement Rule ID: " << entry.movement_rule_id;
+        qDebug() << "  Severity: " << entry.severity;
+        qDebug() << "  Timestamp: " << entry.timestamp.toString(Qt::ISODate);
+        qDebug() << "  Coordinates: (" << entry.coords.x << "," << entry.coords.y << "," << entry.coords.z << ")";
+
+        plot1->graph(2)->addData(entry.coords.x, entry.coords.y);
+        plot2->graph(2)->addData(entry.coords.x, entry.coords.z);
+        plot3->graph(2)->addData(entry.coords.z, entry.coords.y);
+    }
+
+    // Обновляем графики
+    plot1->replot();
+    plot2->replot();
+    plot3->replot();
+}
+
+

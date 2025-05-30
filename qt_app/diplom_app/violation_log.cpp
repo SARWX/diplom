@@ -1,6 +1,5 @@
 #include "violation_log.h"
-#include "datadisplayer.h"
-#include "globals.h"
+
 
 ViolationLogEntry::ViolationLogEntry(const bsoncxx::document::view& doc) {
     using namespace bsoncxx;
@@ -59,27 +58,84 @@ ViolationLogEntry::ViolationLogEntry(const bsoncxx::document::view& doc) {
     }
 }
 
-QList<ViolationLogEntry> loadViolationsFromMongo()
+// Функция 1: Только загрузка данных из MongoDB
+// QList<ViolationLogEntry> loadViolationsFromMongo()
+// {
+//     QList<ViolationLogEntry> violations;
+
+//     mongocxx::client client{mongocxx::uri{}};
+//     auto db = client["lps"];    // lps = local positioning system
+//     auto collection = db["violation_log"];
+
+//     auto cursor = collection.find({});
+//     for (const auto &doc : cursor) {
+//         violations.append(ViolationLogEntry(doc));
+//     }
+
+//     return violations;
+// }
+
+QList<ViolationLogEntry> loadViolationsFromMongo(
+    const QDateTime& startTime,
+    const QDateTime& endTime,
+    const QString& sectorId)
 {
     QList<ViolationLogEntry> violations;
-
     mongocxx::client client{mongocxx::uri{}};
-    auto db = client["lps"];    // lps = local positioning system
+    auto db = client["lps"];
     auto collection = db["violation_log"];
 
-    auto cursor = collection.find({});
-    for (const auto &doc : cursor) {
-        ViolationLogEntry violation = ViolationLogEntry(doc);
-        violations.append(violation);
-        if (g_dataDisplayer) {
-            // Генерация point_number из любой строки id
-            uint point_number = qHash(violation.id) % 1000 + 1000;
-            qDebug() << "point_number: " << point_number;
+    std::vector<bsoncxx::document::value> conditions;
 
-            // Передаем в дисплей
-            g_dataDisplayer->coordinateChanged(violation.coords, 0, 0, 0, point_number);
+    // Добавляем фильтр по времени
+    if (startTime.isValid() && endTime.isValid()) {
+        auto time_filter = bsoncxx::builder::basic::make_document(
+            bsoncxx::builder::basic::kvp("timestamp",
+                                         bsoncxx::builder::basic::make_document(
+                                             bsoncxx::builder::basic::kvp("$gte", bsoncxx::types::b_date{std::chrono::milliseconds{startTime.toMSecsSinceEpoch()}}),
+                                             bsoncxx::builder::basic::kvp("$lte", bsoncxx::types::b_date{std::chrono::milliseconds{endTime.toMSecsSinceEpoch()}})
+                                             )
+                                         )
+            );
+        conditions.push_back(std::move(time_filter));
+    }
+
+    // Добавляем фильтр по sector_id
+    if (!sectorId.isEmpty()) {
+        auto sector_filter = bsoncxx::builder::basic::make_document(
+            bsoncxx::builder::basic::kvp("sector_id", sectorId.toStdString()));
+        conditions.push_back(std::move(sector_filter));
+    }
+
+    bsoncxx::document::view_or_value filter;
+    if (!conditions.empty()) {
+        bsoncxx::builder::basic::array condition_array;
+        for (auto&& cond : conditions) {
+            condition_array.append(cond.view());
         }
+
+        auto combined_filter = bsoncxx::builder::basic::make_document(
+            bsoncxx::builder::basic::kvp("$and", condition_array));
+
+        filter = bsoncxx::document::view_or_value{combined_filter.view()};
+    }
+
+    // Настройка сортировки
+    mongocxx::options::find opts{};
+    opts.sort(bsoncxx::builder::basic::make_document(
+        bsoncxx::builder::basic::kvp("timestamp", -1)));
+
+    // Выполняем запрос
+    auto cursor = conditions.empty()
+                      ? collection.find({}, opts)
+                      : collection.find(filter.view(), opts);
+
+    for (const auto& doc : cursor) {
+        violations.append(ViolationLogEntry(doc));
     }
 
     return violations;
 }
+
+
+

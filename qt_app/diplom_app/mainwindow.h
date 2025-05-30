@@ -5,10 +5,11 @@
 #include <QGraphicsView>
 #include <QVBoxLayout>
 #include <QGraphicsScene>
-//#include "datadisplayer.h"
 #include "testgenerator.h"
 #include "qcustomplot.h"
 #include "violation_log.h"
+#include "datadisplayer.h"
+#include "globals.h"
 
 class MainWindow : public QMainWindow
 {
@@ -40,7 +41,7 @@ private:
     QVBoxLayout *mainLayout;            // Указатель на вертикальный компоновщик QVBoxLayout (расположение частей)
     QVector<QPushButton*> role_buttons;
     void setupInterfaceForRole(const QString &role);
-
+    void displayViolations(const QList<ViolationLogEntry>& violations);
 
 
 
@@ -54,25 +55,44 @@ public slots:
     }
 
     void showViolationIndicators() {
+        static bool violation_displayed = false;
         qDebug() << "showViolationIndicators clicked";
 
-        QList<ViolationLogEntry> violations = loadViolationsFromMongo();
+        if (violation_displayed) {
+            // Просто очищаем графики
+            plot1->graph(2)->data()->clear();
+            plot2->graph(2)->data()->clear();
+            plot3->graph(2)->data()->clear();
 
-        for (const auto& entry : violations) {
-            qDebug() << "Violation:";
-            qDebug() << "  ID: " << entry.id;
-            qDebug() << "  Object ID: " << entry.object_id;
-            qDebug() << "  Sector ID: " << entry.sector_id;
-            qDebug() << "  Movement Rule ID: " << entry.movement_rule_id;
-            qDebug() << "  Severity: " << entry.severity;
-            qDebug() << "  Timestamp: " << entry.timestamp.toString(Qt::ISODate);
-            qDebug() << "  Coordinates: (" << entry.coords.x << "," << entry.coords.y << "," << entry.coords.z << ")";
+            plot1->replot();
+            plot2->replot();
+            plot3->replot();
+
+            violation_displayed = false;
+        } else {
+            QList<ViolationLogEntry> violations = loadViolationsFromMongo();
+            displayViolations(violations);
+            violation_displayed = true;
         }
     }
 
+
     void filterViolations() {
         qDebug() << "filterViolations clicked";
+
+        QList<ViolationLogEntry> all = loadViolationsFromMongo();
+        QList<ViolationLogEntry> filtered;
+
+        for (const auto& entry : all) {
+            // Пример фильтра
+            if (entry.severity == 1) {
+                filtered.append(entry);
+            }
+        }
+
+        displayViolations(filtered);
     }
+
 
     void showViolationDetails() {
         qDebug() << "showViolationDetails clicked";

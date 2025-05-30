@@ -44,7 +44,10 @@ signals:
     void violationDisplayed(coordinates point, float r1, float r2, float r3, int violation_id = 1000);
 };
 
-QList<ViolationLogEntry> loadViolationsFromMongo();
-
+// QList<ViolationLogEntry> loadViolationsFromMongo();
+QList<ViolationLogEntry> loadViolationsFromMongo(
+    const QDateTime& startTime = QDateTime(),
+    const QDateTime& endTime   = QDateTime(),
+    const QString& sectorId    = QString());
 
 #endif // VIOLATION_LOG_H
