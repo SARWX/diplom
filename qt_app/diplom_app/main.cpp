@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
 
     // 1.5 ТЕСТЫ ДЛЯ БАЗЫ ДАННЫХ
     insertTestViolation();
+    int ret = std::system("mongosh /home/tnovikov/study/diplom/qt_app/diplom_app/test_database.js");
 
     // 2. Определить роль пользователя
     RoleWindow roleWindow;

@@ -10,6 +10,7 @@
 #include "violation_log.h"
 #include "datadisplayer.h"
 #include "globals.h"
+#include "filterdialog.h"
 
 class MainWindow : public QMainWindow
 {
@@ -96,14 +97,25 @@ public slots:
     void filterViolations() {
         qDebug() << "filterViolations clicked";
 
-        // Пример фильтра: с 1 мая 2025 по 31 мая 2025, сектор "S1"
-        QDateTime startTime = QDateTime(QDate(2023, 5, 15), QTime(0, 0, 0));
-        QDateTime endTime = QDateTime(QDate(2023, 5, 16), QTime(23, 59, 59));
-        QString sectorId = "sect_A";
+        FilterDialog dialog(this);  // this — указатель на родительское окно (MainWindow)
+        if (dialog.exec() == QDialog::Accepted) {
+            // Получаем данные из диалога
+            FilterSettings params = dialog.getFilterSettings();  // Структура, которую ты возвращаешь
 
-        QList<ViolationLogEntry> filteredViolations = loadViolationsFromMongo(startTime, endTime, sectorId);
+            QDateTime startTime = params.startTime;
+            QDateTime endTime = params.endTime;
+            QString sectorId = params.sectorId;
+            int severityState = params.severity;
 
-        displayViolations(filteredViolations);
+            // При необходимости можешь логгировать:
+            qDebug() << "Start:" << startTime << "End:" << endTime << "Sector:" << sectorId << "Severity:" << severityState;
+
+            QList<ViolationLogEntry> filteredViolations = loadViolationsFromMongo(startTime, endTime, sectorId);
+
+            displayViolations(filteredViolations);
+        } else {
+            qDebug() << "User cancelled filter dialog.";
+        }
     }
 
 

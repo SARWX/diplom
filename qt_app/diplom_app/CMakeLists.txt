@@ -72,6 +72,9 @@ set(CMAKE_FIND_DEBUG_MODE TRUE)
 find_package(bsoncxx CONFIG REQUIRED)
 find_package(mongocxx CONFIG REQUIRED)
 
+# qt_wrap_ui(UI_HEADERS filterdialog.ui)
+set(CMAKE_AUTOUIC ON)
+
 # Исходные файлы
 set(PROJECT_SOURCES
     main.cpp
@@ -93,6 +96,7 @@ set(PROJECT_SOURCES
     mongoservice.cpp
     violation_log.h
     violation_log.cpp
+    filterdialog.ui
 )
 
 # Создание исполняемого файла
@@ -101,6 +105,9 @@ qt_add_executable(diplom_app
     ${PROJECT_SOURCES}
     violation_log.h
     globals.h
+    filterdialog.h
+    filterdialog.cpp
+    test_database.js
 )
 
 # Линковка с Qt6 и MongoDB

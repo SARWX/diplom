@@ -129,8 +129,3 @@ QList<ViolationLogEntry> loadViolationsFromMongo(
     return violations;
 }
 
-
-
-
-
-
