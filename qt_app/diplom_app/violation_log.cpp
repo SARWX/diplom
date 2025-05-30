@@ -81,54 +81,46 @@ QList<ViolationLogEntry> loadViolationsFromMongo(
     const QString& sectorId)
 {
     QList<ViolationLogEntry> violations;
+
     mongocxx::client client{mongocxx::uri{}};
     auto db = client["lps"];
     auto collection = db["violation_log"];
 
-    std::vector<bsoncxx::document::value> conditions;
+    bsoncxx::builder::basic::array condition_array;
+    bool hasConditions = false;
 
-    // Добавляем фильтр по времени
     if (startTime.isValid() && endTime.isValid()) {
-        auto time_filter = bsoncxx::builder::basic::make_document(
+        condition_array.append(bsoncxx::builder::basic::make_document(
             bsoncxx::builder::basic::kvp("timestamp",
                                          bsoncxx::builder::basic::make_document(
                                              bsoncxx::builder::basic::kvp("$gte", bsoncxx::types::b_date{std::chrono::milliseconds{startTime.toMSecsSinceEpoch()}}),
                                              bsoncxx::builder::basic::kvp("$lte", bsoncxx::types::b_date{std::chrono::milliseconds{endTime.toMSecsSinceEpoch()}})
                                              )
                                          )
-            );
-        conditions.push_back(std::move(time_filter));
+            ));
+        hasConditions = true;
     }
 
-    // Добавляем фильтр по sector_id
     if (!sectorId.isEmpty()) {
-        auto sector_filter = bsoncxx::builder::basic::make_document(
-            bsoncxx::builder::basic::kvp("sector_id", sectorId.toStdString()));
-        conditions.push_back(std::move(sector_filter));
+        condition_array.append(bsoncxx::builder::basic::make_document(
+            bsoncxx::builder::basic::kvp("sector_id", sectorId.toStdString())
+            ));
+        hasConditions = true;
     }
 
-    bsoncxx::document::view_or_value filter;
-    if (!conditions.empty()) {
-        bsoncxx::builder::basic::array condition_array;
-        for (auto&& cond : conditions) {
-            condition_array.append(cond.view());
-        }
-
-        auto combined_filter = bsoncxx::builder::basic::make_document(
-            bsoncxx::builder::basic::kvp("$and", condition_array));
-
-        filter = bsoncxx::document::view_or_value{combined_filter.view()};
-    }
-
-    // Настройка сортировки
     mongocxx::options::find opts{};
     opts.sort(bsoncxx::builder::basic::make_document(
         bsoncxx::builder::basic::kvp("timestamp", -1)));
 
-    // Выполняем запрос
-    auto cursor = conditions.empty()
-                      ? collection.find({}, opts)
-                      : collection.find(filter.view(), opts);
+    // Теперь создаём курсор сразу, без предварительного объявления
+    auto cursor = hasConditions
+                      ? collection.find(
+                            bsoncxx::builder::basic::make_document(
+                                bsoncxx::builder::basic::kvp("$and", condition_array)
+                                ).view(),
+                            opts
+                            )
+                      : collection.find({}, opts);
 
     for (const auto& doc : cursor) {
         violations.append(ViolationLogEntry(doc));
@@ -136,6 +128,9 @@ QList<ViolationLogEntry> loadViolationsFromMongo(
 
     return violations;
 }
+
+
+
 
 
 

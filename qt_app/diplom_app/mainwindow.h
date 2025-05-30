@@ -77,21 +77,35 @@ public slots:
     }
 
 
+    // void filterViolations() {
+    //     qDebug() << "filterViolations clicked";
+
+    //     QList<ViolationLogEntry> all = loadViolationsFromMongo();
+    //     QList<ViolationLogEntry> filtered;
+
+    //     for (const auto& entry : all) {
+    //         // Пример фильтра
+    //         if (entry.severity == 1) {
+    //             filtered.append(entry);
+    //         }
+    //     }
+
+    //     displayViolations(filtered);
+    // }
+
     void filterViolations() {
         qDebug() << "filterViolations clicked";
 
-        QList<ViolationLogEntry> all = loadViolationsFromMongo();
-        QList<ViolationLogEntry> filtered;
+        // Пример фильтра: с 1 мая 2025 по 31 мая 2025, сектор "S1"
+        QDateTime startTime = QDateTime(QDate(2023, 5, 15), QTime(0, 0, 0));
+        QDateTime endTime = QDateTime(QDate(2023, 5, 16), QTime(23, 59, 59));
+        QString sectorId = "sect_A";
 
-        for (const auto& entry : all) {
-            // Пример фильтра
-            if (entry.severity == 1) {
-                filtered.append(entry);
-            }
-        }
+        QList<ViolationLogEntry> filteredViolations = loadViolationsFromMongo(startTime, endTime, sectorId);
 
-        displayViolations(filtered);
+        displayViolations(filteredViolations);
     }
+
 
 
     void showViolationDetails() {
