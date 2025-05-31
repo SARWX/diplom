@@ -100,6 +100,20 @@ public slots:
         // Дополнительный код для остановки тестирования (если необходимо)
     }
 
+    // Установить отображение новых координат
+    void displayRouteCoordinate (coordinates point) {
+
+        // Построить график передвижения:
+        plot1->graph(3)->addData(point.x, point.y);
+        plot2->graph(3)->addData(point.x, point.z);
+        plot3->graph(3)->addData(point.z, point.y);
+
+        // Обновляем все графики
+        plot1->replot();
+        plot2->replot();
+        plot3->replot();
+
+    }
 
 
 };

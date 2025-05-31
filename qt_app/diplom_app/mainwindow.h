@@ -11,7 +11,9 @@
 #include "datadisplayer.h"
 #include "globals.h"
 #include "mongodb/violation_log/filterdialog.h"
+#include "mongodb/sector/sector.h"
 #include "mongodb/text_database_displayer.h"
+#include "mongodb/trackerdb.h"
 
 class MainWindow : public QMainWindow
 {
@@ -99,10 +101,19 @@ public slots:
 
     void showRouteOnMap() {
         qDebug() << "showRouteOnMap clicked";
+
+        FilterDialog dialog(this);
+        if (dialog.exec() != QDialog::Accepted) {
+            qDebug() << "User cancelled filter dialog.";
+            return;
+        }
+        FilterSettings params = dialog.getFilterSettings(); // Тут можно специфичное окно поставить
+        g_trackerdb->showObjectRoute(params.startTime, params.endTime);
     }
 
-    void manageZones() {
-        qDebug() << "manageZones clicked";
+    void manageSectors() {
+        qDebug() << "manageSectors clicked";
+        QList<SectorEntry> sectors = loadSectorEntryFromMongo();
     }
 
     void configureRules() {

@@ -80,6 +80,10 @@ MainWindow::MainWindow(const QString &role, QWidget *parent)
     QCPGraph *graph1violation = plot1->addGraph();
     QCPGraph *graph2violation = plot2->addGraph();
     QCPGraph *graph3violation = plot3->addGraph();
+    // Создаем графики (отображения маршрута)
+    QCPGraph *graph1route = plot1->addGraph();
+    QCPGraph *graph2route = plot2->addGraph();
+    QCPGraph *graph3route = plot3->addGraph();
 
     // Настройки стиля графика
     graph1->setLineStyle(QCPGraph::lsNone); // Отключить линии между точками
@@ -253,7 +257,7 @@ void MainWindow::setupInterfaceForRole(const QString &role)
     }
 
     if (role == "admin") {
-        ADD_ROLE_BUTTON("Управление зонами", &MainWindow::manageZones);
+        ADD_ROLE_BUTTON("Управление зонами", &MainWindow::manageSectors);
         ADD_ROLE_BUTTON("Настройка правил", &MainWindow::configureRules);
         ADD_ROLE_BUTTON("Связь правил с объектами", &MainWindow::linkRulesToObjects);
 

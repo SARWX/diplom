@@ -26,6 +26,8 @@ public:
 
 private:
     Ui::FilterDialog *ui;
-    QMap<QString, QString> sectors_map;
+    QMap<QString, QString> sectors_map_name_to_id;
+    QMap<QString, QString> sectors_map_new_id_to_name;
+    
     QMap<QString, QString> getSectorIdMapFromMongo();
 };

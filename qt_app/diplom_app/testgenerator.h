@@ -18,7 +18,7 @@
 #define PLOT_LEFT_Z 0.1
 #define PLOT_RIGHT_Z 4.9
 
-#define INHIBITOR 0.1
+#define INHIBITOR 0.5  // Замедлитель передвижения
 #define ERROR 0.2
 
 #define POS_Y 1.0       // Задает координату якоря Y
@@ -93,9 +93,9 @@ public slots:
         gp.z = gp.z + gen_sign_z * dz;
 //        qDebug() << "new coordinate: " << x << " ; " << y << " ; " << z;
         // Координаты точки
-        gp.x = 0.5;
-        gp.y = 0.4;
-        gp.z = 0.5;
+        // gp.x = 0.5;
+        // gp.y = 0.4;
+        // gp.z = 0.5;
         emit coordinatesGenerated(gp);
     }
 

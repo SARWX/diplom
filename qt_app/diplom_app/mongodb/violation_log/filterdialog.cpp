@@ -19,15 +19,16 @@ FilterDialog::FilterDialog(QWidget *parent) :
     ui(new Ui::FilterDialog)
 {
     ui->setupUi(this);
-    // sectors_map = getSectorIdMapFromMongo();
-    QMap<QString, QString> sectors_map = MongoService::getMongoFieldMap("sector", "name", "_id");
+    // QMap<QString, QString> sectors_map_name_to_id = MongoService::getMongoFieldMap("sector", "name", "_id");
+    sectors_map_name_to_id = MongoService::getMongoFieldMap("sector", "name", "_id");
+    // QMap<QString, QString> sectors_map_new_id_to_name = MongoService::getMongoFieldMap("sector", "_id", "name");
 
     ui->startDateTimeEdit->setDateTime(QDateTime::currentDateTime().addDays(-1));
     ui->endDateTimeEdit->setDateTime(QDateTime::currentDateTime());
 
     // List-box для того, чтобы использовать name, а не id
     ui->sectorComboBox->clear();
-    for (const QString &name : sectors_map.keys()) {
+    for (const QString &name : sectors_map_name_to_id.keys()) {
         ui->sectorComboBox->addItem(name);
     }
 
@@ -45,35 +46,18 @@ FilterSettings FilterDialog::getFilterSettings() const
     FilterSettings settings;
     settings.startTime = ui->startDateTimeEdit->dateTime();
     settings.endTime = ui->endDateTimeEdit->dateTime();
-    // settings.sectorId = ui->sectorLineEdit->text();
     QString selectedName = ui->sectorComboBox->currentText();
-    settings.sectorId = sectors_map.value(selectedName);  // _id по имен
+    // qDebug() << "=============== selected NAME: " << selectedName;
+    // qDebug() << "=============== selected ID: " << sectors_map_name_to_id.value(selectedName);
+    // qDebug() << "=============== available NAMES: ";
+    // for (const QString &name : sectors_map_name_to_id.keys()) {
+    //     qDebug() << name;
+    // }
+    // qDebug() << "=============== available ID: ";
+    // for (const QString &name : sectors_map_name_to_id.values()) {
+    //     qDebug() << name;
+    // }
+    settings.sectorId = sectors_map_name_to_id.value(selectedName);  // _id по имен
     settings.severity = ui->severityCheckBox->checkState();
     return settings;
 }
-
-// QMap<QString, QString> FilterDialog::getSectorIdMapFromMongo()
-// {
-//     QMap<QString, QString> sectorMap;
-
-//     mongocxx::client client{mongocxx::uri{}};
-//     auto db = client["lps"];
-//     auto collection = db["sector"];
-
-//     auto cursor = collection.find({});  // Найдём все документы в коллекции
-
-//     for (const auto& doc : cursor) {
-//         // Проверим, что есть нужные поля
-//         if (doc["name"] && doc["_id"]) {
-//             bsoncxx::types::b_string str = doc["name"].get_string();
-//             QString name = QString::fromStdString(std::string(str.value));
-        
-//             str = doc["_id"].get_string();
-//             QString id = QString::fromStdString(std::string(str.value));
-
-//             sectorMap.insert(name, id);
-//         }
-//     }
-
-//     return sectorMap;
-// }

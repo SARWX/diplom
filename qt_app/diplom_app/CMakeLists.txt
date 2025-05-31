@@ -104,6 +104,10 @@ qt_add_executable(diplom_app
     ${PROJECT_SOURCES}
     mongodb/text_database_displayer.h
     mongodb/text_database_displayer.cpp
+    mongodb/trackerdb.h
+    mongodb/trackerdb.cpp
+    mongodb/sector/sector.h
+    mongodb/sector/sector.cpp
 )
 
 # ----------------------------------------

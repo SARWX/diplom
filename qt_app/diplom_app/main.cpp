@@ -1,16 +1,6 @@
 #include <QApplication>
-#include "mainwindow.h"
-#include "datadisplayer.h"
-#include "testgenerator.h"
-#include "trilaterator.h"
-#include "comander.h"
-#include "SerialPortReader.h"
-#include "rolewindow.h"
 #include <QCoreApplication>
-#include "mongodb/mongoservice.h"
 #include <QTimer>
-
-#include <iostream>
 
 #include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/json.hpp>
@@ -21,9 +11,23 @@
 #include <mongocxx/uri.hpp>
 
 #include <chrono>
+#include <iostream>
 
+#include "mainwindow.h"
+#include "datadisplayer.h"
+#include "testgenerator.h"
+#include "trilaterator.h"
+#include "comander.h"
+#include "SerialPortReader.h"
+#include "rolewindow.h"
 #include "globals.h"
+#include "mongodb/mongoservice.h"
+#include "mongodb/trackerdb.h"
+
+
+
 DataDisplayer* g_dataDisplayer = nullptr;
+TrackerDB* g_trackerdb = nullptr;
 
 int insertTestViolation();
 
@@ -66,6 +70,8 @@ int main(int argc, char *argv[])
     Commander commander(w.lineEdit, w.output_line, w.scrollArea);
     SerialPortReader port(&commander);
     TestGenerator generator(CoordinatesGenerator);
+    TrackerDB trackerdb("obj_001");
+    g_trackerdb = &trackerdb;
 
     // Задаем сигнал-слотовые связи
     QObject::connect(&generator, &TestGenerator::coordinatesGenerated, &generator, &TestGenerator::coordinatesToDistances);
@@ -73,6 +79,11 @@ int main(int argc, char *argv[])
     QObject::connect(&port, &SerialPortReader::newDataReceived, &trilaterator, &Trilaterator::averageDistance);
     QObject::connect(&trilaterator, &Trilaterator::avgDistanceReady, &trilaterator, &Trilaterator::convertDistance);
     QObject::connect(&trilaterator, &Trilaterator::coordinateChanged, &dysplayer, &DataDisplayer::coordinateChanged);
+    // Сохраняем координаты в БД
+    QObject::connect(&trilaterator, &Trilaterator::coordinateChanged, &trackerdb, &TrackerDB::coordinateChanged);
+    // Отображать route на графиках
+    QObject::connect(&trackerdb, &TrackerDB::routeCoordinateReady, &dysplayer, &DataDisplayer::displayRouteCoordinate);
+
     QObject::connect(&port, &SerialPortReader::connectionResult, &commander, &Commander::displayConnectionStatus);
     QObject::connect(w.button1, &QPushButton::clicked, &dysplayer, &DataDisplayer::startTesting);
     QObject::connect(w.button2, &QPushButton::clicked, &dysplayer, &DataDisplayer::stopTesting);

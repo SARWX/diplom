@@ -9,6 +9,8 @@
 #include <mongocxx/database.hpp>
 #include <mongocxx/collection.hpp>
 
+#include "coordinates.h"
+
 class MongoService : public QObject
 {
     Q_OBJECT
@@ -34,5 +36,8 @@ private:
     mongocxx::client *client;
     mongocxx::database db;
 };
+
+// Non-class, common functions
+void parse_coords_from_document(const bsoncxx::document::view& doc, coordinates* coords);
 
 #endif // MONGO_SERVICE_H

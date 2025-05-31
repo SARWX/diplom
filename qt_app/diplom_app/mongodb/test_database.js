@@ -86,10 +86,8 @@ db.sector.insertMany([
     name: "Паяльная зона",
     type: "рабочая зона",
     geometry: {
-      coords: {
         start: { x: 0, y: 0, z: 0 },    // начальная точка
         size: { x: 3, y: 4, z: 3 }       // размеры: 3м в длину, 4м в ширину, 3м в высоту
-      }
     },
     floor_number: 1,
     building_name: "Цех микроэлектроники №3"
@@ -99,10 +97,8 @@ db.sector.insertMany([
     name: "Зона химобработки",
     type: "опасная зона",
     geometry: {
-      coords: {
         start: { x: 3, y: 0, z: 0 },
         size: { x: 3, y: 4, z: 3 }
-      }
     },
     floor_number: 1,
     building_name: "Цех микроэлектроники №3"
@@ -112,10 +108,8 @@ db.sector.insertMany([
     name: "Участок установки компонентов",
     type: "автоматизированная зона",
     geometry: {
-      coords: {
         start: { x: 5, y: 1, z: 3 },
         size: { x: 3, y: 3, z: 3 }
-      }
     },
     floor_number: 1,
     building_name: "Цех микроэлектроники №3"
@@ -125,10 +119,8 @@ db.sector.insertMany([
     name: "Зона хранения",
     type: "склад",
     geometry: {
-      coords: {
         start: { x: 6, y: 0, z: 0 },
         size: { x: 4, y: 4, z: 3 }
-      }
     },
     floor_number: 1,
     building_name: "Цех микроэлектроники №3"
@@ -138,10 +130,8 @@ db.sector.insertMany([
     name: "Общий проход",
     type: "проход",
     geometry: {
-      coords: {
         start: { x: 0, y: 7, z: 0 },
         size: { x: 10, y: 3, z: 3 }
-      }
     },
     floor_number: 1,
     building_name: "Цех микроэлектроники №3"

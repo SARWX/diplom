@@ -85,3 +85,16 @@ QMap<QString, QString> MongoService::getMongoFieldMap(
     return resultMap;
 }
 
+void parse_coords_from_document(const bsoncxx::document::view& doc, coordinates* coords) {
+    if (auto x_elem = doc["x"]; x_elem && x_elem.type() == bsoncxx::type::k_double) {
+        coords->x = x_elem.get_double().value;
+    }
+
+    if (auto y_elem = doc["y"]; y_elem && y_elem.type() == bsoncxx::type::k_double) {
+        coords->y = y_elem.get_double().value;
+    }
+
+    if (auto z_elem = doc["z"]; z_elem && z_elem.type() == bsoncxx::type::k_double) {
+        coords->z = z_elem.get_double().value;
+    }
+}

@@ -1,5 +1,5 @@
 #include "mongodb/violation_log/violation_log.h"
-
+#include "mongodb/mongoservice.h"
 
 ViolationLogEntry::ViolationLogEntry(const bsoncxx::document::view& doc) {
     using namespace bsoncxx;
@@ -42,19 +42,20 @@ ViolationLogEntry::ViolationLogEntry(const bsoncxx::document::view& doc) {
 
     // Координаты: "coords" должен быть вложенным документом с "x", "y", "z"
     if (auto elem = doc["coords"]; elem && elem.type() == bsoncxx::type::k_document) {
-        auto coord_doc = elem.get_document().view();
+        parse_coords_from_document(elem.get_document().view(), &coords);
+        // auto coord_doc = elem.get_document().view();
 
-        if (auto x_elem = coord_doc["x"]; x_elem && x_elem.type() == bsoncxx::type::k_double) {
-            coords.x = x_elem.get_double().value;
-        }
+        // if (auto x_elem = coord_doc["x"]; x_elem && x_elem.type() == bsoncxx::type::k_double) {
+        //     coords.x = x_elem.get_double().value;
+        // }
 
-        if (auto y_elem = coord_doc["y"]; y_elem && y_elem.type() == bsoncxx::type::k_double) {
-            coords.y = y_elem.get_double().value;
-        }
+        // if (auto y_elem = coord_doc["y"]; y_elem && y_elem.type() == bsoncxx::type::k_double) {
+        //     coords.y = y_elem.get_double().value;
+        // }
 
-        if (auto z_elem = coord_doc["z"]; z_elem && z_elem.type() == bsoncxx::type::k_double) {
-            coords.z = z_elem.get_double().value;
-        }
+        // if (auto z_elem = coord_doc["z"]; z_elem && z_elem.type() == bsoncxx::type::k_double) {
+        //     coords.z = z_elem.get_double().value;
+        // }
     }
 }
 
