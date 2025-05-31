@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     MongoService mongo;
 
     const QString uri = "mongodb://localhost:27017";  // Подставь свой URI при необходимости
-    const QString dbName = "testdb";
+    const QString dbName = "lps";
 
     if (!mongo.connectToDatabase(uri, dbName)) {
         qCritical() << "Не удалось подключиться к базе данных.";
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     // Если роль выбрана — продолжаем запуск приложения
     QString role = roleWindow.selectedRole();
 
-    MainWindow w(role);
+    MainWindow w(role, &mongo);
 
     // ВАЖНО: остальной код должен быть ТОЛЬКО здесь
     // Создаем объект dysplayer

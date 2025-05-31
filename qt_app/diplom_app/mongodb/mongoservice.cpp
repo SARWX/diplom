@@ -1,8 +1,10 @@
-#include "mongoservice.h"
 #include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/types.hpp>
 #include <chrono>
 #include <QDebug>
+
+#include "mongodb/mongoservice.h"
+#include "mongodb/sector/sector.h"
 
 MongoService::MongoService(QObject *parent)
     : QObject(parent), client(nullptr)
@@ -85,6 +87,64 @@ QMap<QString, QString> MongoService::getMongoFieldMap(
     return resultMap;
 }
 
+bool MongoService::saveToMongo(const SectorEntry &entry)
+{
+    try {
+        qDebug() << "[saveToMongo] Starting...";
+
+        // Проверим имя БД
+        qDebug() << "[saveToMongo] Database name:" << QString::fromStdString(db.name().data());
+
+        // Получаем коллекцию
+        auto collection = db["sector"];
+        qDebug() << "[saveToMongo] Using collection: 'sector'";
+
+        // Преобразуем в BSON
+        auto doc = entry.toBson();
+        qDebug() << "[saveToMongo] BSON document:";
+        qDebug().noquote() << QString::fromStdString(bsoncxx::to_json(doc.view()));
+
+        // Фильтр
+        bsoncxx::builder::basic::document filter;
+        filter.append(
+            bsoncxx::builder::basic::kvp("name", entry.name.toStdString()),
+            bsoncxx::builder::basic::kvp("building_name", entry.building_name.toStdString())
+        );
+
+        qDebug().noquote() << "[saveToMongo] Filter:"
+                           << QString::fromStdString(bsoncxx::to_json(filter.view()));
+
+        // upsert
+        mongocxx::options::replace opts;
+        opts.upsert(true);
+
+        // Выполняем
+        auto result = collection.replace_one(filter.view(), doc.view(), opts);
+
+        if (result) {
+            if (result->modified_count() > 0) {
+                qDebug() << "[saveToMongo] Existing document modified.";
+            } else if (result->upserted_id()) {
+                auto id = result->upserted_id()->get_oid().value.to_string();
+                qDebug() << "[saveToMongo] New document inserted with _id:"
+                         << QString::fromStdString(id);
+            } else {
+                qDebug() << "[saveToMongo] No changes made.";
+            }
+        } else {
+            qDebug() << "[saveToMongo] replace_one returned std::nullopt.";
+        }
+
+        return true;
+    } catch (const std::exception &e) {
+        qDebug() << "[saveToMongo] Exception:" << e.what();
+        return false;
+    }
+}
+
+
+
+
 void parse_coords_from_document(const bsoncxx::document::view& doc, coordinates* coords) {
     if (auto x_elem = doc["x"]) {
         if (x_elem.type() == bsoncxx::type::k_double)
@@ -113,3 +173,4 @@ void parse_coords_from_document(const bsoncxx::document::view& doc, coordinates*
             coords->z = static_cast<double>(z_elem.get_int64().value);
     }
 }
+

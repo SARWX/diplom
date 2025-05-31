@@ -108,6 +108,7 @@ qt_add_executable(diplom_app
     mongodb/trackerdb.cpp
     mongodb/sector/sector.h
     mongodb/sector/sector.cpp
+    mongodb/sector/sectorlistdialog.h mongodb/sector/sectorlistdialog.cpp mongodb/sector/sectorlistdialog.ui
 )
 
 # ----------------------------------------

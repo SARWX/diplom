@@ -1,5 +1,8 @@
 #include "mongodb/sector/sector.h"
 #include "mongodb/mongoservice.h"
+#include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/types.hpp>
+
 
 SectorEntry::SectorEntry(const bsoncxx::document::view& doc) {
     using namespace bsoncxx;
@@ -74,4 +77,36 @@ QList<SectorEntry> loadSectorEntryFromMongo()
     }
 
     return sectors;
+}
+
+bsoncxx::document::value SectorEntry::toBson() const {
+    using bsoncxx::builder::basic::kvp;
+    using bsoncxx::builder::basic::make_document;
+    using bsoncxx::builder::basic::array;
+
+    // Сначала создаём массив
+    array geometryArray;
+    geometryArray.append(
+        make_document(
+            kvp("x", geometry[0].x),
+            kvp("y", geometry[0].y),
+            kvp("z", geometry[0].z)
+        )
+    );
+    geometryArray.append(
+        make_document(
+            kvp("x", geometry[1].x),
+            kvp("y", geometry[1].y),
+            kvp("z", geometry[1].z)
+        )
+    );
+
+    // Затем собираем и возвращаем документ
+    return make_document(
+        kvp("name", name.toStdString()),
+        kvp("type", type.toStdString()),
+        kvp("floor_number", floor_number),
+        kvp("building_name", building_name.toStdString()),
+        kvp("geometry", geometryArray)
+    );
 }

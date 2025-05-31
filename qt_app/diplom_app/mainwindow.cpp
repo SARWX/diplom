@@ -20,7 +20,7 @@ do {                                                      \
 
 
 
-MainWindow::MainWindow(const QString &role, QWidget *parent)
+MainWindow::MainWindow(const QString &role, MongoService *mongoservice_arg, QWidget *parent)
     : QMainWindow(parent)
 {
     // Определим разрешение ээкрана
@@ -235,7 +235,7 @@ MainWindow::MainWindow(const QString &role, QWidget *parent)
 //    });
 
     connect(button3, &QPushButton::clicked, this, &MainWindow::toggleOutputLineVisibility);
-
+    mongoservice = mongoservice_arg;
 }
 
 void MainWindow::setupInterfaceForRole(const QString &role)

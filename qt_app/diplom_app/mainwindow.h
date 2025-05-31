@@ -12,15 +12,17 @@
 #include "globals.h"
 #include "mongodb/violation_log/filterdialog.h"
 #include "mongodb/sector/sector.h"
+#include "mongodb/sector/sectorlistdialog.h"
 #include "mongodb/text_database_displayer.h"
 #include "mongodb/trackerdb.h"
+#include "mongodb/mongoservice.h"
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(const QString &role, QWidget *parent = nullptr);
+    explicit MainWindow(const QString &role, MongoService *mongoservice_arg, QWidget *parent = nullptr);
     QCustomPlot *plot1 = new QCustomPlot();
     QCustomPlot *plot2 = new QCustomPlot();
     QCustomPlot *plot3 = new QCustomPlot();
@@ -40,6 +42,7 @@ public:
     QPushButton *button5 = new QPushButton("Нажми\nменя");
     QPushButton *button6 = new QPushButton("Нажми\nменя");
     QMap<QString, QPushButton*> buttons;
+    MongoService *mongoservice;
 
 private:
     QVBoxLayout *mainLayout;            // Указатель на вертикальный компоновщик QVBoxLayout (расположение частей)
@@ -114,6 +117,16 @@ public slots:
     void manageSectors() {
         qDebug() << "manageSectors clicked";
         QList<SectorEntry> sectors = loadSectorEntryFromMongo();
+        SectorListDialog dlg(sectors);
+        if (dlg.exec() == QDialog::Accepted) {
+            qDebug() << "We will try to iterate";
+            QList<SectorEntry> updated = dlg.getUpdatedSectors();
+            qDebug() << "We get UPDATED sectors!!! not bad!!";
+
+            for (const SectorEntry &entry : updated) {
+                mongoservice->saveToMongo(entry);
+            }
+        }
     }
 
     void configureRules() {

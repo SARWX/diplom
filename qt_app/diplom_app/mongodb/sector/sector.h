@@ -36,6 +36,11 @@ public:
     coordinates geometry[2];    // 0 -start, 1 - size
     int floor_number;
     QString building_name;
+    bsoncxx::document::value toBson() const;
+
+
+    // Конструктор по умолчанию
+    SectorEntry() = default;
 
     // Конструктор из BSON-документа
     SectorEntry(const bsoncxx::document::view &doc);

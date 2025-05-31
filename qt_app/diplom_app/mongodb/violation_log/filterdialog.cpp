@@ -19,9 +19,7 @@ FilterDialog::FilterDialog(QWidget *parent) :
     ui(new Ui::FilterDialog)
 {
     ui->setupUi(this);
-    // QMap<QString, QString> sectors_map_name_to_id = MongoService::getMongoFieldMap("sector", "name", "_id");
     sectors_map_name_to_id = MongoService::getMongoFieldMap("sector", "name", "_id");
-    // QMap<QString, QString> sectors_map_new_id_to_name = MongoService::getMongoFieldMap("sector", "_id", "name");
 
     ui->startDateTimeEdit->setDateTime(QDateTime::currentDateTime().addDays(-1));
     ui->endDateTimeEdit->setDateTime(QDateTime::currentDateTime());
