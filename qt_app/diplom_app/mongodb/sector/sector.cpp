@@ -40,11 +40,13 @@ SectorEntry::SectorEntry(const bsoncxx::document::view& doc) {
 
         // 1 - start point
         if (auto elem = geometry_doc["start"]; elem && elem.type() == bsoncxx::type::k_document) {
+            qDebug() << "<<<<<<<<<<<<<<<PARSING<<<<<<<<<<GEOMETRY-----1";
             parse_coords_from_document(elem.get_document().view(), (geometry + 0));
         }
-
+        
         // 2 - size
         if (auto elem = geometry_doc["size"]; elem && elem.type() == bsoncxx::type::k_document) {
+            qDebug() << "<<<<<<<<<<<<<<<PARSING<<<<<<<<<<GEOMETRY-----2";
             parse_coords_from_document(elem.get_document().view(), (geometry + 1));
         }
     }

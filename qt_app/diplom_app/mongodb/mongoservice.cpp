@@ -86,15 +86,30 @@ QMap<QString, QString> MongoService::getMongoFieldMap(
 }
 
 void parse_coords_from_document(const bsoncxx::document::view& doc, coordinates* coords) {
-    if (auto x_elem = doc["x"]; x_elem && x_elem.type() == bsoncxx::type::k_double) {
-        coords->x = x_elem.get_double().value;
+    if (auto x_elem = doc["x"]) {
+        if (x_elem.type() == bsoncxx::type::k_double)
+            coords->x = x_elem.get_double().value;
+        else if (x_elem.type() == bsoncxx::type::k_int32)
+            coords->x = static_cast<double>(x_elem.get_int32().value);
+        else if (x_elem.type() == bsoncxx::type::k_int64)
+            coords->x = static_cast<double>(x_elem.get_int64().value);
     }
 
-    if (auto y_elem = doc["y"]; y_elem && y_elem.type() == bsoncxx::type::k_double) {
-        coords->y = y_elem.get_double().value;
+    if (auto y_elem = doc["y"]) {
+        if (y_elem.type() == bsoncxx::type::k_double)
+            coords->y = y_elem.get_double().value;
+        else if (y_elem.type() == bsoncxx::type::k_int32)
+            coords->y = static_cast<double>(y_elem.get_int32().value);
+        else if (y_elem.type() == bsoncxx::type::k_int64)
+            coords->y = static_cast<double>(y_elem.get_int64().value);
     }
 
-    if (auto z_elem = doc["z"]; z_elem && z_elem.type() == bsoncxx::type::k_double) {
-        coords->z = z_elem.get_double().value;
+    if (auto z_elem = doc["z"]) {
+        if (z_elem.type() == bsoncxx::type::k_double)
+            coords->z = z_elem.get_double().value;
+        else if (z_elem.type() == bsoncxx::type::k_int32)
+            coords->z = static_cast<double>(z_elem.get_int32().value);
+        else if (z_elem.type() == bsoncxx::type::k_int64)
+            coords->z = static_cast<double>(z_elem.get_int64().value);
     }
 }

@@ -100,7 +100,7 @@ QString TextDataBaseDisplayer::formatViolation(const ViolationLogEntry& violatio
     QMap<QString, QString> objects_map = MongoService::getMongoFieldMap("object", "_id", "owner_name");
     qDebug() << "keys: " << objects_map.keys() << "\nvalues: " << objects_map.values();
     QMap<QString, QString> sectors_map_id_to_name = MongoService::getMongoFieldMap("sector", "_id", "name");
-    QMap<QString, QString> sectors_map_name_to_id = MongoService::getMongoFieldMap("sector", "name", "_id");
+    // QMap<QString, QString> sectors_map_name_to_id = MongoService::getMongoFieldMap("sector", "name", "_id");
 
     // Безопасное получение значений с fallback
     QString object_name = objects_map.value(violation.object_id, "Unknown object");
