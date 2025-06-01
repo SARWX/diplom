@@ -16,6 +16,9 @@
 #include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/types.hpp>
 
+#include <optional> // Что это????
+
+
 #include "mongodb/mongoservice.h"
 #include "mongodb/sector/sector.h"
 
@@ -129,10 +132,6 @@ bool MongoService::saveToMongo(const SectorEntry &entry)
     try {
         qDebug() << "[saveToMongo] Starting...";
 
-        // Проверим имя БД
-        qDebug() << "[saveToMongo] Database name:" << QString::fromStdString(db.name().data());
-
-        // Получаем коллекцию
         auto collection = db["sector"];
         qDebug() << "[saveToMongo] Using collection: 'sector'";
 
@@ -141,38 +140,38 @@ bool MongoService::saveToMongo(const SectorEntry &entry)
         qDebug() << "[saveToMongo] BSON document:";
         qDebug().noquote() << QString::fromStdString(bsoncxx::to_json(doc.view()));
 
-        // Фильтр
-        bsoncxx::builder::basic::document filter;
-        filter.append(
-            bsoncxx::builder::basic::kvp("name", entry.name.toStdString()),
-            bsoncxx::builder::basic::kvp("building_name", entry.building_name.toStdString())
-        );
+        if (!entry.id.isEmpty()) {
+            // Если id есть — обновляем документ по _id
+            bsoncxx::builder::basic::document filter;
+            filter.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::oid{entry.id.toStdString()}));
 
-        qDebug().noquote() << "[saveToMongo] Filter:"
-                           << QString::fromStdString(bsoncxx::to_json(filter.view()));
+            mongocxx::options::replace opts;
+            opts.upsert(false); // не вставляем, если не найден
 
-        // upsert
-        mongocxx::options::replace opts;
-        opts.upsert(true);
+            auto result = collection.replace_one(filter.view(), doc.view(), opts);
 
-        // Выполняем
-        auto result = collection.replace_one(filter.view(), doc.view(), opts);
+            if (result && result->modified_count() > 0) {
+                qDebug() << "[saveToMongo] Document with _id" << entry.id << "updated.";
+            } else {
+                qDebug() << "[saveToMongo] No matching document found to update.";
+                return false;
+            }
+        } else {
+            // Если id нет — просто вставляем новый документ
+            auto insert_result = collection.insert_one(doc.view());
 
-        if (result) {
-            if (result->modified_count() > 0) {
-                qDebug() << "[saveToMongo] Existing document modified.";
-            } else if (result->upserted_id()) {
-                auto id = result->upserted_id()->get_oid().value.to_string();
+            if (insert_result && insert_result->inserted_id().type() == bsoncxx::type::k_oid) {
+                auto id = insert_result->inserted_id().get_oid().value.to_string();
                 qDebug() << "[saveToMongo] New document inserted with _id:"
                          << QString::fromStdString(id);
             } else {
-                qDebug() << "[saveToMongo] No changes made.";
+                qDebug() << "[saveToMongo] Insert failed.";
+                return false;
             }
-        } else {
-            qDebug() << "[saveToMongo] replace_one returned std::nullopt.";
         }
 
         return true;
+
     } catch (const std::exception &e) {
         qDebug() << "[saveToMongo] Exception:" << e.what();
         return false;

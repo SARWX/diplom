@@ -33,6 +33,7 @@ void SectorListDialog::populateSectorList()
 
     for (const SectorEntry &entry : sectorList) {
         QWidget* editor = new QWidget;
+        editor->setProperty("sectorId", entry.id); // сохранение id
         QVBoxLayout* layout = new QVBoxLayout(editor);
 
         QLineEdit* nameEdit = new QLineEdit(entry.name);
@@ -118,7 +119,14 @@ QList<SectorEntry> SectorListDialog::getUpdatedSectors() const
 SectorEntry SectorListDialog::getSectorFromEditor(QWidget* editor) const
 {
     SectorEntry result;
-
+    QVariant idProp = editor->property("sectorId");
+    if (idProp.isValid() && idProp.canConvert<QString>()) {
+        QString sectorId = idProp.toString();
+        if (!sectorId.isEmpty()) {
+            result.id = sectorId;
+        }
+    }
+    qDebug() << "We save id: " << result.id;
     result.name = editor->findChild<QLineEdit*>("nameEdit")->text();
     qDebug() << "We1 1";
     result.type = editor->findChild<QLineEdit*>("typeEdit")->text();
