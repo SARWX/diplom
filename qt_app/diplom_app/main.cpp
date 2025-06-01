@@ -29,6 +29,8 @@
 DataDisplayer* g_dataDisplayer = nullptr;
 TrackerDB* g_trackerdb = nullptr;
 
+QString get_test_object();
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -67,7 +69,7 @@ int main(int argc, char *argv[])
     Commander commander(w.lineEdit, w.output_line, w.scrollArea);
     SerialPortReader port(&commander);
     TestGenerator generator(CoordinatesGenerator);
-    TrackerDB trackerdb("obj_001");
+    TrackerDB trackerdb(get_test_object());
     g_trackerdb = &trackerdb;
 
     // Задаем сигнал-слотовые связи
@@ -89,3 +91,42 @@ int main(int argc, char *argv[])
     w.show();
     return a.exec();
 }
+
+
+QString get_test_object()
+{
+    try {
+        // Подключение к MongoDB
+        mongocxx::client client{mongocxx::uri{}};
+        mongocxx::database db = client["lps"];
+        mongocxx::collection collection = db["object"];
+
+        // Формируем фильтр
+        bsoncxx::builder::basic::document filter;
+        filter.append(bsoncxx::builder::basic::kvp("owner_name", "Иванов С.А."));
+
+        // Выполняем запрос
+        auto maybe_doc = collection.find_one(filter.view());
+
+        if (maybe_doc) {
+            auto doc = maybe_doc->view();
+
+            if (doc["_id"] && doc["_id"].type() == bsoncxx::type::k_oid) {
+                std::string id_str = doc["_id"].get_oid().value.to_string();
+                qDebug() << "[get_test_object] Found _id:" << QString::fromStdString(id_str);
+                return QString::fromStdString(id_str);
+            } else {
+                qDebug() << "[get_test_object] _id missing or not ObjectId";
+                return QString();
+            }
+        } else {
+            qDebug() << "[get_test_object] No document with owner_name = 'Иванов С.А.'";
+            return QString();
+        }
+
+    } catch (const std::exception &e) {
+        qDebug() << "[get_test_object] Exception:" << e.what();
+        return QString();
+    }
+}
+
