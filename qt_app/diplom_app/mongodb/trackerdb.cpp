@@ -1,5 +1,6 @@
 #include "trackerdb.h"
 #include "coordinates.h"
+#include "mongodb/mongoservice.h"
 #include <QDateTime>
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/types.hpp>
@@ -30,7 +31,7 @@ void TrackerDB::coordinateChanged(coordinates point, float r1, float r2, float r
     );
 
     auto doc = make_document(
-        kvp("object_id", m_objectId.toStdString()),
+        kvp("object_id", stringToOid(m_objectId)),
         kvp("timestamp", bsoncxx::types::b_date{std::chrono::milliseconds{now}}),
         kvp("coordinates", coordinates_doc.view())  // <-- ВАЖНО: view!
     );

@@ -86,8 +86,11 @@ public slots:
     // Обработка фильтрации с графическим выводом
     void filterViolations() 
     {
+        qDebug() << "Filter 1";
         QList<ViolationLogEntry> violations = getFilteredViolations();
+        qDebug() << "Filter 2";
         displayViolations(violations);
+        qDebug() << "Filter 3";
     }
 
     // Обработка фильтрации с текстовым выводом

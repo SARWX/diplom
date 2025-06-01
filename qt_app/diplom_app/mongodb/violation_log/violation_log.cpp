@@ -6,26 +6,30 @@ ViolationLogEntry::ViolationLogEntry(const bsoncxx::document::view& doc) {
 
     // Строка "id"
     if (auto elem = doc["_id"]; elem) {
-        types::b_string str = elem.get_string();
-        id = QString::fromStdString(std::string(str.value));
+        bsoncxx::oid id_tmp = elem.get_oid().value;
+        id = idToQString(id_tmp);
+        qDebug() << "Document ID is:" << id;
     }
 
     // Строка "object_id"
     if (auto elem = doc["object_id"]; elem) {
-        types::b_string str = elem.get_string();
-        object_id = QString::fromStdString(std::string(str.value));
+        bsoncxx::oid id_tmp = elem.get_oid().value;
+        object_id = idToQString(id_tmp);
+        qDebug() << "Document ID is:" << object_id;
     }
 
     // Строка "sector_id"
     if (auto elem = doc["sector_id"]; elem) {
-        types::b_string str = elem.get_string();
-        sector_id = QString::fromStdString(std::string(str.value));
+        bsoncxx::oid id_tmp = elem.get_oid().value;
+        sector_id = idToQString(id_tmp);
+        qDebug() << "Document ID is:" << sector_id;
     }
 
     // Строка "movement_rule_id"
     if (auto elem = doc["movement_rule_id"]; elem) {
-        types::b_string str = elem.get_string();
-        movement_rule_id = QString::fromStdString(std::string(str.value));
+        bsoncxx::oid id_tmp = elem.get_oid().value;
+        movement_rule_id = idToQString(id_tmp);
+        qDebug() << "Document ID is:" << movement_rule_id;
     }
 
     // Число "severity"
@@ -43,19 +47,6 @@ ViolationLogEntry::ViolationLogEntry(const bsoncxx::document::view& doc) {
     // Координаты: "coords" должен быть вложенным документом с "x", "y", "z"
     if (auto elem = doc["coords"]; elem && elem.type() == bsoncxx::type::k_document) {
         parse_coords_from_document(elem.get_document().view(), &coords);
-        // auto coord_doc = elem.get_document().view();
-
-        // if (auto x_elem = coord_doc["x"]; x_elem && x_elem.type() == bsoncxx::type::k_double) {
-        //     coords.x = x_elem.get_double().value;
-        // }
-
-        // if (auto y_elem = coord_doc["y"]; y_elem && y_elem.type() == bsoncxx::type::k_double) {
-        //     coords.y = y_elem.get_double().value;
-        // }
-
-        // if (auto z_elem = coord_doc["z"]; z_elem && z_elem.type() == bsoncxx::type::k_double) {
-        //     coords.z = z_elem.get_double().value;
-        // }
     }
 }
 
@@ -96,31 +87,35 @@ QList<ViolationLogEntry> loadViolationsFromMongo(
                                          bsoncxx::builder::basic::make_document(
                                              bsoncxx::builder::basic::kvp("$gte", bsoncxx::types::b_date{std::chrono::milliseconds{startTime.toMSecsSinceEpoch()}}),
                                              bsoncxx::builder::basic::kvp("$lte", bsoncxx::types::b_date{std::chrono::milliseconds{endTime.toMSecsSinceEpoch()}})
-                                             )
-                                         )
-            ));
+                                         ))
+        ));
         hasConditions = true;
     }
 
     if (!sectorId.isEmpty()) {
-        condition_array.append(bsoncxx::builder::basic::make_document(
-            bsoncxx::builder::basic::kvp("sector_id", sectorId.toStdString())
+        try {
+            bsoncxx::oid realOid = stringToOid(sectorId);
+            condition_array.append(bsoncxx::builder::basic::make_document(
+                bsoncxx::builder::basic::kvp("sector_id", realOid)
             ));
-        hasConditions = true;
+            hasConditions = true;
+        } catch (const std::exception& e) {
+            qDebug() << "Invalid sectorId format for OID:" << sectorId << "Error:" << e.what();
+            return violations;  // можно также продолжить без сектора, если нужно
+        }
     }
 
     mongocxx::options::find opts{};
     opts.sort(bsoncxx::builder::basic::make_document(
         bsoncxx::builder::basic::kvp("timestamp", -1)));
 
-    // Теперь создаём курсор сразу, без предварительного объявления
     auto cursor = hasConditions
                       ? collection.find(
                             bsoncxx::builder::basic::make_document(
                                 bsoncxx::builder::basic::kvp("$and", condition_array)
-                                ).view(),
+                            ).view(),
                             opts
-                            )
+                        )
                       : collection.find({}, opts);
 
     for (const auto& doc : cursor) {
@@ -129,4 +124,5 @@ QList<ViolationLogEntry> loadViolationsFromMongo(
 
     return violations;
 }
+
 

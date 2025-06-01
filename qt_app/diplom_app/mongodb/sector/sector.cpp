@@ -9,8 +9,12 @@ SectorEntry::SectorEntry(const bsoncxx::document::view& doc) {
 
     // Строка "id"
     if (auto elem = doc["_id"]; elem) {
-        types::b_string str = elem.get_string();
-        id = QString::fromStdString(std::string(str.value));
+        // types::b_string str = elem.get_string();
+        // id = QString::fromStdString(std::string(str.value));
+
+        bsoncxx::oid id_tmp = elem.get_oid().value;
+        id = idToQString(id_tmp);
+        qDebug() << "Document ID is:" << id;
     }
 
     // Строка "name"

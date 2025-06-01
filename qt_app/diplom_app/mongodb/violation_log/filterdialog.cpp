@@ -19,17 +19,20 @@ FilterDialog::FilterDialog(QWidget *parent) :
     ui(new Ui::FilterDialog)
 {
     ui->setupUi(this);
+    qDebug() << "Filter 1.1";
     sectors_map_name_to_id = MongoService::getMongoFieldMap("sector", "name", "_id");
 
+    qDebug() << "Filter 1.2";
     ui->startDateTimeEdit->setDateTime(QDateTime::currentDateTime().addDays(-1));
     ui->endDateTimeEdit->setDateTime(QDateTime::currentDateTime());
 
     // List-box для того, чтобы использовать name, а не id
     ui->sectorComboBox->clear();
+    qDebug() << "Filter 1.3";
     for (const QString &name : sectors_map_name_to_id.keys()) {
         ui->sectorComboBox->addItem(name);
     }
-
+    qDebug() << "Filter 1.4";
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &FilterDialog::accept);
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &FilterDialog::reject);
 }

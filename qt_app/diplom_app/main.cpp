@@ -29,8 +29,6 @@
 DataDisplayer* g_dataDisplayer = nullptr;
 TrackerDB* g_trackerdb = nullptr;
 
-int insertTestViolation();
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -47,7 +45,6 @@ int main(int argc, char *argv[])
     }
 
     // 1.5 ТЕСТЫ ДЛЯ БАЗЫ ДАННЫХ
-    insertTestViolation();
     int ret = std::system("mongosh /home/tnovikov/study/diplom/qt_app/diplom_app/mongodb/test_database.js");
 
     // 2. Определить роль пользователя
@@ -91,81 +88,4 @@ int main(int argc, char *argv[])
 
     w.show();
     return a.exec();
-}
-
-
-// int main(int argc, char *argv[])
-// {
-//     QCoreApplication a(argc, argv);
-
-//     MongoService mongo;
-
-//     const QString uri = "mongodb://localhost:27017";  // Подставь свой URI при необходимости
-//     const QString dbName = "testdb";
-
-//     if (!mongo.connectToDatabase(uri, dbName)) {
-//         qCritical() << "Не удалось подключиться к базе данных.";
-//         return -1;
-//     }
-
-//     // Таймер — чтобы попытки шли не в блокирующем цикле
-//     QTimer *timer = new QTimer;
-//     QObject::connect(timer, &QTimer::timeout, [&mongo, timer]() {
-//         bool success = mongo.insertViolation("Тестовое нарушение", 3);
-//         if (success) {
-//             qInfo() << "Документ успешно вставлен.";
-//             timer->stop();
-//             QCoreApplication::quit();
-//         } else {
-//             qWarning() << "Ошибка вставки. Повтор...";
-//         }
-//     });
-
-//     timer->start(1000);  // Повторять каждые 1000 мс
-
-//     return a.exec();
-// }
-
-
-// ================ TEST ONLY =================== //
-using bsoncxx::builder::basic::kvp;
-using bsoncxx::builder::basic::make_document;
-
-int insertTestViolation() {
-    try {
-        mongocxx::instance instance{};
-        mongocxx::uri uri("mongodb://localhost:27017");  // или твой URI
-        mongocxx::client client(uri);
-
-        auto database = client["lps"];
-        auto collection = database["violation_log"];
-
-        auto result = collection.insert_one(
-            make_document(
-                kvp("id", "test_violation_001"),
-                kvp("object_id", "obj_123"),
-                kvp("sector_id", "sector_A1"),
-                kvp("movement_rule_id", "rule_99"),
-                kvp("severity", 3),
-                kvp("timestamp", bsoncxx::types::b_date(std::chrono::system_clock::now())),
-                kvp("coords", make_document(
-                                  kvp("x", 100.0),
-                                  kvp("y", 200.0),
-                                  kvp("z", 0.0)
-                                  ))
-                )
-            );
-
-        if (result) {
-            std::cout << "Inserted document ID: "
-                      << result->inserted_id().get_oid().value.to_string()
-                      << std::endl;
-        }
-
-    } catch (const mongocxx::exception& e) {
-        std::cout << "An exception occurred: " << e.what() << "\n";
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
 }

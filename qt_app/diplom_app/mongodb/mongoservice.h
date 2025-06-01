@@ -43,4 +43,9 @@ private:
 // Non-class, common functions
 void parse_coords_from_document(const bsoncxx::document::view& doc, coordinates* coords);
 
+QString idToQString(const bsoncxx::oid &id);
+
+bsoncxx::oid stringToOid(const QString &str);
+
+
 #endif // MONGO_SERVICE_H

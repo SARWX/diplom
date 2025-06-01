@@ -3,6 +3,19 @@
 #include <chrono>
 #include <QDebug>
 
+#include <QObject>
+#include <bsoncxx/json.hpp>
+#include <mongocxx/client.hpp>
+#include <mongocxx/instance.hpp>
+#include <mongocxx/uri.hpp>
+#include <mongocxx/database.hpp>
+#include <mongocxx/collection.hpp>
+
+#include "mongodb/sector/sector.h"
+#include "mongodb/mongoservice.h"
+#include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/types.hpp>
+
 #include "mongodb/mongoservice.h"
 #include "mongodb/sector/sector.h"
 
@@ -60,8 +73,8 @@ bool MongoService::insertViolation(const QString &type, int severity)
 }
 
 QMap<QString, QString> MongoService::getMongoFieldMap(
-    const QString& collectionName, 
-    const QString& keyField, 
+    const QString& collectionName,
+    const QString& keyField,
     const QString& valueField)
 {
     QMap<QString, QString> resultMap;
@@ -73,19 +86,43 @@ QMap<QString, QString> MongoService::getMongoFieldMap(
     auto cursor = collection.find({});
 
     for (const auto& doc : cursor) {
-        if (doc[keyField.toStdString()] && doc[valueField.toStdString()]) {
-            bsoncxx::types::b_string keyStr = doc[keyField.toStdString()].get_string();
-            bsoncxx::types::b_string valueStr = doc[valueField.toStdString()].get_string();
-            
-            resultMap.insert(
-                QString::fromStdString(std::string(keyStr.value)),
-                QString::fromStdString(std::string(valueStr.value))
-            );
+        auto keyElement = doc[keyField.toStdString()];
+        auto valueElement = doc[valueField.toStdString()];
+
+        QString keyStr, valueStr;
+
+        try {
+            bsoncxx::types::b_string str = keyElement.get_string();
+            keyStr = QString::fromStdString(std::string(str.value));
+        } catch (...) {
+            try {
+                keyStr = idToQString(keyElement.get_oid().value);
+            } catch (...) {
+                qDebug() << "Unsupported keyField in doc:" << QString::fromStdString(bsoncxx::to_json(doc));
+                continue;
+            }
         }
+
+        try {        
+            bsoncxx::types::b_string str = valueElement.get_string();
+            valueStr = QString::fromStdString(std::string(str.value));
+        } catch (...) {
+            try {
+                valueStr = idToQString(valueElement.get_oid().value);
+            } catch (...) {
+                qDebug() << "Unsupported valueField in doc:" << QString::fromStdString(bsoncxx::to_json(doc));
+                continue;
+            }
+        }
+
+        resultMap.insert(keyStr, valueStr);
     }
 
     return resultMap;
 }
+
+
+
 
 bool MongoService::saveToMongo(const SectorEntry &entry)
 {
@@ -174,3 +211,11 @@ void parse_coords_from_document(const bsoncxx::document::view& doc, coordinates*
     }
 }
 
+
+QString idToQString(const bsoncxx::oid &id) {
+    return QString::fromStdString(id.to_string());
+}
+
+bsoncxx::oid stringToOid(const QString &str) {
+    return bsoncxx::oid{str.toStdString()};
+}
