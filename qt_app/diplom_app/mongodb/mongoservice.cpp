@@ -22,6 +22,7 @@
 #include "mongodb/mongoservice.h"
 #include "mongodb/sector/sector.h"
 #include "mongodb/object/object.h"
+#include "mongodb/movement_rule/movement_rule.h"
 
 
 MongoService::MongoService(QObject *parent)
@@ -231,6 +232,56 @@ bool MongoService::saveToMongo(const ObjectEntry &entry)
     }
 }
 
+bool MongoService::saveToMongo(const MovementRuleEntry &entry)
+{
+    try {
+        qDebug() << "[saveToMongo] Starting...";
+
+        auto collection = db["movement_rule"];
+        qDebug() << "[saveToMongo] Using collection: 'movement_rule'";
+
+        // Преобразуем в BSON
+        auto doc = entry.toBson();
+        qDebug() << "[saveToMongo] BSON document:";
+        qDebug().noquote() << QString::fromStdString(bsoncxx::to_json(doc.view()));
+
+        if (!entry.id.isEmpty()) {
+            // Если id есть — обновляем документ по _id
+            bsoncxx::builder::basic::document filter;
+            filter.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::oid{entry.id.toStdString()}));
+
+            mongocxx::options::replace opts;
+            opts.upsert(false); // не вставляем, если не найден
+
+            auto result = collection.replace_one(filter.view(), doc.view(), opts);
+
+            if (result && result->modified_count() > 0) {
+                qDebug() << "[saveToMongo] Document with _id" << entry.id << "updated.";
+            } else {
+                qDebug() << "[saveToMongo] No matching document found to update.";
+                return false;
+            }
+        } else {
+            // Если id нет — просто вставляем новый документ
+            auto insert_result = collection.insert_one(doc.view());
+
+            if (insert_result && insert_result->inserted_id().type() == bsoncxx::type::k_oid) {
+                auto id = insert_result->inserted_id().get_oid().value.to_string();
+                qDebug() << "[saveToMongo] New document inserted with _id:"
+                         << QString::fromStdString(id);
+            } else {
+                qDebug() << "[saveToMongo] Insert failed.";
+                return false;
+            }
+        }
+
+        return true;
+
+    } catch (const std::exception &e) {
+        qDebug() << "[saveToMongo] Exception:" << e.what();
+        return false;
+    }
+}
 
 
 void parse_coords_from_document(const bsoncxx::document::view& doc, coordinates* coords) {

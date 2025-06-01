@@ -112,6 +112,9 @@ qt_add_executable(diplom_app
     mongodb/object/object.h
     mongodb/object/object.cpp
     mongodb/object/objectlistdialog.h mongodb/object/objectlistdialog.cpp mongodb/object/objectlistdialog.ui
+    mongodb/movement_rule/movement_rule.h
+    mongodb/movement_rule/movement_rule.cpp
+    mongodb/movement_rule/movementrulelistdialog.h mongodb/movement_rule/movementrulelistdialog.cpp mongodb/movement_rule/movementrulelistdialog.ui
 )
 
 # ----------------------------------------

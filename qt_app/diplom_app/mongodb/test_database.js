@@ -8,49 +8,6 @@ db.object.deleteMany({});
 db.movement_rule.deleteMany({});
 db.violation_log.deleteMany({});
 
-// ================================== object ================================== //
-
-let r_obj_001 = db.object.insertOne(
-  {
-    group_id: "grp_engineers",
-    type: "person_tag",
-    owner_name: "Иванов С.А.",
-    device_uid: "DEV-ENG-001"
-  });
-  let r_obj_002 = db.object.insertOne(
-  {
-    group_id: "grp_operators",
-    type: "person_tag",
-    owner_name: "Петрова И.Н.",
-    device_uid: "DEV-OPR-002"
-  });
-  let r_obj_003 = db.object.insertOne(
-  {
-    group_id: "grp_equipment",
-    type: "equipment_tag",
-    owner_name: "SMD Автомат #1",
-    device_uid: "DEV-EQP-003"
-  });
-  let r_obj_004 = db.object.insertOne(
-  {
-    group_id: "grp_visitors",
-    type: "person_tag",
-    owner_name: "Экскурсант Мария",
-    device_uid: "DEV-VIS-004"
-  });
-  let r_obj_005 = db.object.insertOne(
-  {
-    group_id: "grp_equipment",
-    type: "equipment_tag",
-    owner_name: "Осциллограф 2",
-    device_uid: "DEV-CHM-005"
-  });
-
-  let obj_001 = r_obj_001.insertedId;
-  let obj_002 = r_obj_002.insertedId;
-  let obj_003 = r_obj_003.insertedId;
-  let obj_004 = r_obj_004.insertedId;
-  let obj_005 = r_obj_005.insertedId;
 
 // ================================== group ================================== //
 
@@ -85,6 +42,52 @@ let grp_operators = r_grp_002.insertedId;
 let grp_equipment = r_grp_003.insertedId;
 let grp_visitors = r_grp_004.insertedId;
 let grp_chem_robots = r_grp_005.insertedId;
+
+// ================================== object ================================== //
+
+let r_obj_001 = db.object.insertOne(
+  {
+    group_id: grp_engineers,
+    type: "person_tag",
+    owner_name: "Иванов С.А.",
+    device_uid: "DEV-ENG-001"
+  });
+  let r_obj_002 = db.object.insertOne(
+  {
+    group_id: grp_operators,
+    type: "person_tag",
+    owner_name: "Петрова И.Н.",
+    device_uid: "DEV-OPR-002"
+  });
+  let r_obj_003 = db.object.insertOne(
+  {
+    group_id: grp_equipment,
+    type: "equipment_tag",
+    owner_name: "SMD Автомат #1",
+    device_uid: "DEV-EQP-003"
+  });
+  let r_obj_004 = db.object.insertOne(
+  {
+    group_id: grp_visitors,
+    type: "person_tag",
+    owner_name: "Экскурсант Мария",
+    device_uid: "DEV-VIS-004"
+  });
+  let r_obj_005 = db.object.insertOne(
+  {
+    group_id: grp_equipment,
+    type: "equipment_tag",
+    owner_name: "Осциллограф 2",
+    device_uid: "DEV-CHM-005"
+  });
+
+  let obj_001 = r_obj_001.insertedId;
+  let obj_002 = r_obj_002.insertedId;
+  let obj_003 = r_obj_003.insertedId;
+  let obj_004 = r_obj_004.insertedId;
+  let obj_005 = r_obj_005.insertedId;
+
+
 
 // ================================== sector ================================== //
 

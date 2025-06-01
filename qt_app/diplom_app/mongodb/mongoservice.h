@@ -12,6 +12,7 @@
 #include "coordinates.h"
 #include "mongodb/sector/sector.h"
 #include "mongodb/object/object.h"
+#include "mongodb/movement_rule/movement_rule.h"
 
 class MongoService : public QObject
 {
@@ -30,6 +31,7 @@ public:
         const QString& valueField);
     bool saveToMongo(const SectorEntry &entry);
     bool saveToMongo(const ObjectEntry &entry);
+    bool saveToMongo(const MovementRuleEntry &entry);
 
 
 signals:

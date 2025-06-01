@@ -18,6 +18,9 @@
 #include "mongodb/object/object.h"
 #include "mongodb/object/objectlistdialog.h"
 
+#include "mongodb/movement_rule/movement_rule.h"
+#include "mongodb/movement_rule/movementrulelistdialog.h"
+
 #include "mongodb/text_database_displayer.h"
 #include "mongodb/trackerdb.h"
 #include "mongodb/mongoservice.h"
@@ -137,14 +140,6 @@ public slots:
         }
     }
 
-    void configureRules() {
-        qDebug() << "configureRules clicked";
-    }
-
-    void linkRulesToObjects() {
-        qDebug() << "linkRulesToObjects clicked";
-    }
-
     void createUser() {
         qDebug() << "createUser clicked";
         QList<ObjectEntry> objects = loadObjectEntryFromMongo();
@@ -159,6 +154,26 @@ public slots:
             }
         }
     }
+
+    void configureRules() {
+        qDebug() << "configureRules clicked";
+        QList<MovementRuleEntry> movement_rules = loadMovementRuleEntryFromMongo();
+        MovementRuleListDialog dlg(movement_rules);
+        if (dlg.exec() == QDialog::Accepted) {
+            qDebug() << "We will try to iterate";
+            QList<MovementRuleEntry> updated = dlg.getUpdatedMovementRules();
+            qDebug() << "We get UPDATED movement_rules!!! not bad!!";
+
+            for (const MovementRuleEntry &entry : updated) {
+                mongoservice->saveToMongo(entry);
+            }
+        }
+    }
+
+    void linkRulesToObjects() {
+        qDebug() << "linkRulesToObjects clicked";
+    }
+
 
     void assignRoles() {
         qDebug() << "assignRoles clicked";
