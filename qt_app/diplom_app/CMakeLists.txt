@@ -109,6 +109,9 @@ qt_add_executable(diplom_app
     mongodb/sector/sector.h
     mongodb/sector/sector.cpp
     mongodb/sector/sectorlistdialog.h mongodb/sector/sectorlistdialog.cpp mongodb/sector/sectorlistdialog.ui
+    mongodb/object/object.h
+    mongodb/object/object.cpp
+    mongodb/object/objectlistdialog.h mongodb/object/objectlistdialog.cpp mongodb/object/objectlistdialog.ui
 )
 
 # ----------------------------------------

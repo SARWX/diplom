@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SectorListDialog</class>
- <widget class="QDialog" name="SectorListDialog">
+ <class>ObjectListDialog</class>
+ <widget class="QDialog" name="ObjectListDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>419</height>
+    <height>241</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,9 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>391</y>
+     <y>200</y>
      <width>341</width>
-     <height>21</height>
+     <height>32</height>
     </rect>
    </property>
    <property name="orientation">
@@ -29,27 +29,27 @@
     <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
    </property>
   </widget>
+  <widget class="QPushButton" name="addNewObject">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>210</y>
+     <width>80</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Добавить объект</string>
+   </property>
+  </widget>
   <widget class="QListWidget" name="listWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
      <width>381</width>
-     <height>371</height>
+     <height>181</height>
     </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="addNewSector">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>390</y>
-     <width>80</width>
-     <height>19</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Добавить сектор</string>
    </property>
   </widget>
  </widget>
@@ -58,7 +58,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>SectorListDialog</receiver>
+   <receiver>ObjectListDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -74,7 +74,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>SectorListDialog</receiver>
+   <receiver>ObjectListDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

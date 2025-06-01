@@ -11,8 +11,13 @@
 #include "datadisplayer.h"
 #include "globals.h"
 #include "mongodb/violation_log/filterdialog.h"
+
 #include "mongodb/sector/sector.h"
 #include "mongodb/sector/sectorlistdialog.h"
+
+#include "mongodb/object/object.h"
+#include "mongodb/object/objectlistdialog.h"
+
 #include "mongodb/text_database_displayer.h"
 #include "mongodb/trackerdb.h"
 #include "mongodb/mongoservice.h"
@@ -142,6 +147,17 @@ public slots:
 
     void createUser() {
         qDebug() << "createUser clicked";
+        QList<ObjectEntry> objects = loadObjectEntryFromMongo();
+        ObjectListDialog dlg(objects);
+        if (dlg.exec() == QDialog::Accepted) {
+            qDebug() << "We will try to iterate";
+            QList<ObjectEntry> updated = dlg.getUpdatedObjects();
+            qDebug() << "We get UPDATED objects!!! not bad!!";
+
+            for (const ObjectEntry &entry : updated) {
+                mongoservice->saveToMongo(entry);
+            }
+        }
     }
 
     void assignRoles() {

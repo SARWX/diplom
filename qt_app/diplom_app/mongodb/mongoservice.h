@@ -11,6 +11,7 @@
 
 #include "coordinates.h"
 #include "mongodb/sector/sector.h"
+#include "mongodb/object/object.h"
 
 class MongoService : public QObject
 {
@@ -28,6 +29,7 @@ public:
         const QString& keyField, 
         const QString& valueField);
     bool saveToMongo(const SectorEntry &entry);
+    bool saveToMongo(const ObjectEntry &entry);
 
 
 signals:
